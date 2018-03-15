@@ -1,0 +1,108 @@
+@import "../openpa_designitalia/themes/base/base";
+@import "../openpa_designitalia/themes/base/compat";
+@import "../openpa_designitalia/themes/base/organigramma";
+@import "../openpa_designitalia/themes/base/openpa";
+@import "../openpa_designitalia/themes/base/owl.theme.default";
+
+/* Start theme */
+/*
+ *	Only apply to body class="trentinofamiglia"
+ */
+.trentinofamiglia {
+  font-family: var(--Theme-font-family-sans);
+}
+
+/**
+ * 	Brand color
+ */
+:root {
+  --Color-primary: #6e6e6e;
+  --Color-secondary: #6e6e6e;
+  --Prose-color-text-primary: #1c2024;
+  --Prose-color-text-secondary: #5a6772;
+  --Prose-color-text-highlighted: #b2ebed;
+  --Prose-color-link: var(--Color-primary);
+  --Prose-color-link-hover: var(--Color-primary);
+  --Prose-color-link-visited: var(--Color-primary);
+  --Color-focus: rgba(255,255,255, 0);
+}
+
+/**
+ * 	Fonts
+ */
+:root {
+  --Theme-font-family-sans: Titillium Web, HelveticaNeue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+}
+
+a{
+  color: var(--Color-primary);
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+button, input[type=submit]{
+  cursor: pointer;
+}
+
+a:focus {
+  background: var(--Color-focus);
+  outline: var(--Color-focus) solid 3px;
+  color: var(--Color-primary);
+}
+
+#toolbar{
+@extend .u-hidden;
+@extend .u-md-block;
+@extend .u-lg-block;
+}
+
+.GridStriped .Grid:nth-child(2n) {
+@extend .u-background-grey-10;
+}
+
+.ContainerStriped .ItemStriped:nth-child(2n) {
+@extend .u-background-grey-10;
+}
+
+.Header-navbar {
+  background-color: var(--Color-white) !important;
+  border-bottom: 1px solid var(--Color-primary);
+}
+
+.Hamburger-toggle,
+.Hamburger-toggle:before,
+.Hamburger-toggle:after {
+  background: var(--Color-black) !important;
+}
+
+.Hamburger-toggle.is-active {
+  background-color: transparent !important;
+}
+
+.Hamburger-toggle.is-active:before,
+.Hamburger-toggle.is-active:after {
+  background-color: var(--Color-white) !important;
+}
+
+.Header-searchTrigger button,
+.Header-search button {
+@extend .u-background-90;
+}
+
+.Header-toggleText,
+.Header-titleLink a {
+  color: var(--Color-black) !important;
+}
+
+.owl-theme .owl-nav {
+  top: -83px !important;
+}
+
+.openpa-full.class-homepage .content {
+  @extend .u-padding-bottom-none;
+}
+
+.openpa-panel {
+  @extend .u-borderRadius-m;
+  border: 1px solid #ccc;
+}

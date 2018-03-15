@@ -1,0 +1,12 @@
+#HeaderLine{
+	height: 5px;
+	content: " ";
+	width: 100%;
+	background: url('../images/tnfam-header-bg.jpg') no-repeat center center;
+	display: block;
+	background-size: cover;
+}
+
+.owl-item .openpa-panel{
+	width: 100%!important;
+}
