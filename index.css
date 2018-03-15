@@ -25,6 +25,8 @@
   --Prose-color-link-hover: var(--Color-primary);
   --Prose-color-link-visited: var(--Color-primary);
   --Color-focus: rgba(255,255,255, 0);
+
+  --Color-footer: #212b33;
 }
 
 /**
@@ -64,9 +66,51 @@ a:focus {
 @extend .u-background-grey-10;
 }
 
+.Header-banner {
+  background-color: var(--Color-primary) !important;
+}
+
+.Header-banner span {
+  text-transform: uppercase;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 0.9em !important;
+  font-weight: 200;
+}
+
+.Header-logo img {
+  @media (--sm-viewport) {
+    height: 7.5rem;
+    width: 7.5rem;
+  }
+
+  @media (--md-viewport) {
+    height: 10.5rem;
+    width: 10.5rem;
+  }
+
+  @media (--lg-viewport) {
+    height: 13.5rem;
+    width: 13.5rem;
+  }
+}
+
 .Header-navbar {
   background-color: var(--Color-white) !important;
-  border-bottom: 1px solid var(--Color-primary);
+  border-bottom: none;
+}
+
+.Header-search .Form-field {
+  border: 1px solid #ccc;
+}
+
+.Header-search .Form-input {
+  border: none;
+}
+
+.Header-searchTrigger button,
+.Header-search button {
+  @extend .u-background-white;
+  @extend .u-color-50;
 }
 
 .Hamburger-toggle,
@@ -84,14 +128,15 @@ a:focus {
   background-color: var(--Color-white) !important;
 }
 
-.Header-searchTrigger button,
-.Header-search button {
-@extend .u-background-90;
-}
-
 .Header-toggleText,
 .Header-titleLink a {
   color: var(--Color-black) !important;
+}
+
+/* Footer */
+
+.footer-container {
+  background-color: var(--Color-footer);
 }
 
 .owl-theme .owl-nav {

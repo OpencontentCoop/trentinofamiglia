@@ -7,10 +7,6 @@ const debuglog = util.debuglog('postcss')
 const path = require('path')
 const _ = require('lodash')
 
-console.log(Config)
-console.log(util)
-console.log(path)
-
 module.exports = {
   use: [
     // 'postcss-devtools',
