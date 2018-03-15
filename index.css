@@ -134,6 +134,9 @@ a:focus {
 }
 
 /* Footer */
+.valutation-container {
+  background-color: #00334c;
+}
 
 .footer-container {
   background-color: var(--Color-footer);

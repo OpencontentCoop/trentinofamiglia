@@ -40,7 +40,7 @@
     {if and( $ui_context|ne( 'edit' ), $ui_context|ne( 'browse' ) )}
         {if $pagedata.class_identifier|ne('')}
            {literal}<script>$(document).on('click', '#toggle-validation', function(e){$('#openpa-valuation').toggle();e.preventDefault();});</script>{/literal}
-            <div class="u-background-95 u-padding-all-xl u-layoutCenter u-hiddenPrint">
+            <div class="valutation-container u-padding-all-xl u-layoutCenter u-hiddenPrint">
                 <p class="u-textCenter u-margin-top-m u-margin-bottom-m">
                     <a href="#" id="toggle-validation" class="u-color-white u-textClean u-text-h3">
                         <span class="u-padding-r-right Icon Icon-comment"></span> Valuta questo sito
