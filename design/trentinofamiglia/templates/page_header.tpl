@@ -5,6 +5,11 @@
     {include uri='design:menu/header_menu.tpl'}
 </header>
 
+{*
 {if and( $pagedata.is_homepage|not, array( 'edit', 'browse' )|contains( $ui_context )|not() )}
+    {include uri='design:header/banner.tpl'}
+{/if}
+*}
+{if and( is_area_tematica(), array( 'edit', 'browse' )|contains( $ui_context )|not() )}
     {include uri='design:header/banner.tpl'}
 {/if}

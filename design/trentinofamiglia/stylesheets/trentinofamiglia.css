@@ -7,6 +7,34 @@
 	background-size: cover;
 }
 
+.owl-carousel {
+  padding: 0 1.5em;
+}
+
+.owl-theme .owl-nav {
+  position: unset;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.owl-prev {
+  padding: 0 !important;
+  margin: 0 !important;
+  position: absolute;
+  top: 45%;
+  left: 0;
+
+}
+
+.owl-next {
+  padding: 0 !important;
+  margin: 0 !important;
+  position: absolute;
+  top: 45%;
+  right: 0;
+}
+
+
 .owl-item .openpa-panel{
 	width: 100%!important;
 }

@@ -142,6 +142,14 @@ a:focus {
   background-color: var(--Color-footer);
 }
 
+.Headroom-hideme {
+  max-height: none;
+}
+
+.Headroom-hideme.Header-homebanner #Imageheader .inner {
+  padding-top: 19%;
+}
+
 .owl-theme .owl-nav {
   top: -83px !important;
 }
@@ -151,6 +159,6 @@ a:focus {
 }
 
 .openpa-panel {
-  @extend .u-borderRadius-m;
+  border-radius: 0 !important;
   border: 1px solid #ccc;
 }
