@@ -36,7 +36,7 @@
     {set $footerBlocksClass = concat('u-md-size1of', $footerBlocks, ' u-lg-size1of', $footerBlocks) }
 {/if}
 
-{if openpaini('GeneralSettings','valutation', 1)}
+{if openpaini('GeneralSettings','valutation', 1)|eq(1)}
     {if and( $ui_context|ne( 'edit' ), $ui_context|ne( 'browse' ) )}
         {if $pagedata.class_identifier|ne('')}
            {literal}<script>$(document).on('click', '#toggle-validation', function(e){$('#openpa-valuation').toggle();e.preventDefault();});</script>{/literal}
