@@ -20,22 +20,33 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
     if ($this->contentType == 'geojson') {
       $parentNode = eZHTTPTool::instance()->getVariable('parentNode', 0);
       $featureData = new DataHandlerTnFamMapMarkersGeoJsonFeatureCollection();
-      if ($parentNode > 0) {
+
+
+
+      $contentRepository = new ContentRepository();
+      $contentSearch = new ContentSearch();
+
+      $currentEnvironment = new FullEnvironmentSettings();
+      $contentRepository->setEnvironment( $currentEnvironment );
+      $contentSearch->setEnvironment( $currentEnvironment );
+
+      $parser = new ezpRestHttpRequestParser();
+      $request = $parser->createRequest();
+      $currentEnvironment->__set('request', $request);
+
+      $query = false;
+      /*if (isset( $this->currentCustomAttributes['query'] )) {
+        $query = (string)$this->currentCustomAttributes['query'];
+      }*/
+
+
+      if ( isset($request->get) /*$parentNode > 0*/) {
         $result = false;
-        $classIdentifiers = eZHTTPTool::instance()->getVariable('classIdentifiers', false);
+        //$classIdentifiers = eZHTTPTool::instance()->getVariable('classIdentifiers', false);
 
-        $query = "classes [certificazione_familyaudit] subtree [{$parentNode}] limit 500 facets [stato_certificazione|alpha|100]";
+        //$query = "classes [certificazione_familyaudit] subtree [{$parentNode}] limit 500 facets [stato_certificazione|alpha|100]";
+        $query = $request->get['query'] . ' limit 500';
 
-        $contentRepository = new ContentRepository();
-        $contentSearch = new ContentSearch();
-
-        $currentEnvironment = new FullEnvironmentSettings();
-        $contentRepository->setEnvironment($currentEnvironment);
-        $contentSearch->setEnvironment($currentEnvironment);
-
-        $parser = new ezpRestHttpRequestParser();
-        $request = $parser->createRequest();
-        $currentEnvironment->__set('request', $request);
 
         $language = eZLocale::currentLocaleCode();
         try {
