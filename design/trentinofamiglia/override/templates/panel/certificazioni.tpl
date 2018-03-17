@@ -43,6 +43,4 @@
     </div>
   </div>
 
-  <a class="readmore" href="{object_handler($node).content_link.full_link}" title="{$node.name|wash()}">Leggi</a>
-
 </div>
