@@ -4,6 +4,7 @@
     tools: null,
     mapId: '',
     markersId: '',
+    markers: null,
     map: null,
 
     clero: function(){
@@ -59,7 +60,6 @@
           values = [values]
         }
         if (values != null && values.length > 0) {
-          console.log(this.tools);
           opendataMap.tools.settings.builder.filters[that.data('field')] = {
             'field': that.data('field'),
             'operator': 'contains',
@@ -70,7 +70,7 @@
           console.log('elimina filtro');
         }
         console.log(opendataMap.tools.settings.builder.filters);
-        var query = opendataMap.buildQuery(false);
+        opendataMap.loadMarkersInMap();
 
       });
     },
@@ -99,15 +99,13 @@
       var query = opendataMap.buildQuery(false)
       var geoJson = endpoint + '?query=' + query + '&contentType=geojson';
 
-
-      //var tiles = L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18,attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'});
       var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       });
       opendataMap.map = L.map(opendataMap.mapId).addLayer(tiles);
       opendataMap.map.scrollWheelZoom.disable();
-      var markers = L.markerClusterGroup();
+      opendataMap.markers = L.markerClusterGroup();
       var markerMap = {};
       $.getJSON(geoJson, function (data) {
 
@@ -119,11 +117,11 @@
             return marker;
           }
         });
-        markers.addLayer(geoJsonLayer);
-        opendataMap.map.addLayer(markers);
-        opendataMap.map.fitBounds(markers.getBounds());
+        opendataMap.markers.addLayer(geoJsonLayer);
+        opendataMap.map.addLayer(opendataMap.markers);
+        opendataMap.map.fitBounds(opendataMap.markers.getBounds());
       });
-      markers.on('click', function (a) {
+      opendataMap.markers.on('click', function (a) {
         $.getJSON("{/literal}{'/openpa/data/map_markers'|ezurl(no)}{literal}?contentType=marker&view=panel&id=" + a.layer.feature.id, function (data) {
           var popup = new L.Popup({maxHeight: 360});
           popup.setLatLng(a.layer.getLatLng());
@@ -131,6 +129,40 @@
           opendataMap.map.openPopup(popup);
         });
       });
+    },
+
+    loadMarkersInMap:  function(){
+      var endpoint = opendataMap.tools.settings.endpoint;
+      var query = opendataMap.buildQuery(false);
+      var geoJson = endpoint + '?query=' + query + '&contentType=geojson';
+
+      if (opendataMap.map) {
+        opendataMap.markers.clearLayers();
+        lastMapQuery = query;
+        var markerMap = {};
+        $.getJSON(geoJson, function (data) {
+
+          var geoJsonLayer = L.geoJson(data.content, {
+            pointToLayer: function (feature, latlng) {
+              var customIcon = L.MakiMarkers.icon({icon: "star", color: "#f00", size: "l"});
+              var marker = L.marker(latlng, {icon: customIcon});
+              markerMap[feature.id] = marker;
+              return marker;
+            }
+          });
+          opendataMap.markers.addLayer(geoJsonLayer);
+          opendataMap.map.addLayer(opendataMap.markers);
+          opendataMap.map.fitBounds(opendataMap.markers.getBounds());
+        });
+        opendataMap.markers.on('click', function (a) {
+          $.getJSON("{/literal}{'/openpa/data/map_markers'|ezurl(no)}{literal}?contentType=marker&view=panel&id=" + a.layer.feature.id, function (data) {
+            var popup = new L.Popup({maxHeight: 360});
+            popup.setLatLng(a.layer.getLatLng());
+            popup.setContent(data.content);
+            opendataMap.map.openPopup(popup);
+          });
+        });
+      }
     }
 
 

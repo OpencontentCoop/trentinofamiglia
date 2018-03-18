@@ -47,7 +47,6 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
         //$query = "classes [certificazione_familyaudit] subtree [{$parentNode}] limit 500 facets [stato_certificazione|alpha|100]";
         $query = $request->get['query'] . ' limit 500';
 
-
         $language = eZLocale::currentLocaleCode();
         try {
           $data = $contentSearch->search($query);
