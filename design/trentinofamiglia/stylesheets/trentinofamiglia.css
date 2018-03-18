@@ -38,3 +38,11 @@
 .owl-item .openpa-panel{
 	width: 100%!important;
 }
+
+.reverse-related {
+  width: 90%;
+}
+
+.reverse-related tr td p {
+  padding-bottom: 5px;
+}
