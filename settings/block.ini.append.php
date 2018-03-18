@@ -2,6 +2,9 @@
 
 [General]
 AllowedTypes[]=Query
+#AllowedTypes[]=MappaFamilyAudit
+#AllowedTypes[]=MappaFamilyInTrentino
+#AllowedTypes[]=MappaDistrettoFamiglia
 
 [Query]
 Name=Lista automatica basata su query
@@ -37,3 +40,33 @@ ItemsPerRow[lista_in_evidenza]=1
 ItemsPerRow[lista_in_evidenza_wide]=1
 ItemsPerRow[lista_carousel]=1
 ItemsPerRow[lista_carousel_wide]=1
+
+[MappaFamilyAudit]
+Name=Mappa Family Audit
+ManualAddingOfItems=disabled
+CustomAttributes[]
+ViewList[]
+ViewList[]=default
+ViewName[]
+ViewName[default]=Default
+ItemsPerRow[]
+
+[MappaFamilyInTrentino]
+Name=Mappa Family in Trentino
+ManualAddingOfItems=disabled
+CustomAttributes[]
+ViewList[]
+ViewList[]=default
+ViewName[]
+ViewName[default]=Default
+ItemsPerRow[]
+
+[MappaDistrettoFamiglia]
+Name=Mappa Distretto Famiglia
+ManualAddingOfItems=disabled
+CustomAttributes[]
+ViewList[]
+ViewList[]=default
+ViewName[]
+ViewName[default]=Default
+ItemsPerRow[]

@@ -41,7 +41,7 @@
             }
           });
 
-          var selectContainer = $('<div class="form-group" style="margin-bottom: 10px"></div>');
+          var selectContainer = $('<div class="form-group" style="margin-bottom: 10px; float: left; margin-left: 10px"></div>');
           var label = $('<label for="' + facetDefinition.field + '">' + facetDefinition.name + '</label>');
 
           selectContainer.append(label);
@@ -75,7 +75,6 @@
       });
     },
 
-
     buildQuery: function (notEncoded) {
       var query = '';
       $.each(opendataMap.tools.settings.builder.filters, function () {
@@ -106,34 +105,12 @@
       opendataMap.map = L.map(opendataMap.mapId).addLayer(tiles);
       opendataMap.map.scrollWheelZoom.disable();
       opendataMap.markers = L.markerClusterGroup();
-      var markerMap = {};
-      $.getJSON(geoJson, function (data) {
-
-        var geoJsonLayer = L.geoJson(data.content, {
-          pointToLayer: function (feature, latlng) {
-            var customIcon = L.MakiMarkers.icon({icon: "star", color: "#f00", size: "l"});
-            var marker = L.marker(latlng, {icon: customIcon});
-            markerMap[feature.id] = marker;
-            return marker;
-          }
-        });
-        opendataMap.markers.addLayer(geoJsonLayer);
-        opendataMap.map.addLayer(opendataMap.markers);
-        opendataMap.map.fitBounds(opendataMap.markers.getBounds());
-      });
-      opendataMap.markers.on('click', function (a) {
-        $.getJSON("{/literal}{'/openpa/data/map_markers'|ezurl(no)}{literal}?contentType=marker&view=panel&id=" + a.layer.feature.id, function (data) {
-          var popup = new L.Popup({maxHeight: 360});
-          popup.setLatLng(a.layer.getLatLng());
-          popup.setContent(data.content);
-          opendataMap.map.openPopup(popup);
-        });
-      });
+      opendataMap.loadMarkersInMap();
     },
 
     loadMarkersInMap:  function(){
       var endpoint = opendataMap.tools.settings.endpoint;
-      var query = opendataMap.buildQuery(false);
+      var query = opendataMap.buildQuery(true);
       var geoJson = endpoint + '?query=' + query + '&contentType=geojson';
 
       if (opendataMap.map) {
@@ -155,7 +132,7 @@
           opendataMap.map.fitBounds(opendataMap.markers.getBounds());
         });
         opendataMap.markers.on('click', function (a) {
-          $.getJSON("{/literal}{'/openpa/data/map_markers'|ezurl(no)}{literal}?contentType=marker&view=panel&id=" + a.layer.feature.id, function (data) {
+          $.getJSON( endpoint + "?contentType=marker&view=panel&id=" + a.layer.feature.id, function (data) {
             var popup = new L.Popup({maxHeight: 360});
             popup.setLatLng(a.layer.getLatLng());
             popup.setContent(data.content);

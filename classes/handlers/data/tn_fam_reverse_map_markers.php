@@ -5,7 +5,7 @@ use Opencontent\Opendata\Api\ContentSearch;
 use Opencontent\Opendata\Api\Values\Content;
 
 
-class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
+class DataHandlerTnFamReverseMapMarkers implements OpenPADataHandlerInterface
 {
   public $contentType = 'geojson';
 
@@ -19,9 +19,7 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
   {
     if ($this->contentType == 'geojson') {
       $parentNode = eZHTTPTool::instance()->getVariable('parentNode', 0);
-      $featureData = new DataHandlerTnFamMapMarkersGeoJsonFeatureCollection();
-
-
+      $featureData = new DataHandlerTnFamReverseMapMarkersGeoJsonFeatureCollection();
 
       $contentRepository = new ContentRepository();
       $contentSearch = new ContentSearch();
@@ -34,24 +32,29 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
       $request = $parser->createRequest();
       $currentEnvironment->__set('request', $request);
 
-      $query = false;
-      /*if (isset( $this->currentCustomAttributes['query'] )) {
-        $query = (string)$this->currentCustomAttributes['query'];
-      }*/
+      $language = eZLocale::currentLocaleCode();
+      $query = 'classes [certificazione_familyintrentino] limit 500';
+      $data = $contentSearch->search($query);
+
+      $objIds = array();
+
+      if ($data->totalCount > 0)
+      {
+        foreach ($data->searchHits as $hit) {
+          $objIds []= $hit['data'][$language]['id_unico']['content'][0]['id'];
+        }
+      }
+      array_unique($objIds);
 
 
       if ( isset($request->get) /*$parentNode > 0*/) {
         $result = false;
         //$classIdentifiers = eZHTTPTool::instance()->getVariable('classIdentifiers', false);
-
         //$query = "classes [certificazione_familyaudit] subtree [{$parentNode}] limit 500 facets [stato_certificazione|alpha|100]";
-        $query = $request->get['query'] . ' limit 500';
+        $query = $request->get['query'] . ' and raw[meta_id_si] in  ['. implode(',', $objIds) .'] limit 500';
 
-        $language = eZLocale::currentLocaleCode();
         try {
           $data = $contentSearch->search($query);
-
-
 
           if ($data->totalCount > 0)
           {
@@ -59,24 +62,6 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
 
             foreach ($data->searchHits as $hit) {
               try {
-
-                $geoAttribute = '';
-                switch ($hit['metadata']['classIdentifier'])
-                {
-                  case 'certificazione_familyaudit';
-                    $geoAttribute = 'id_unico';
-                    break;
-
-                  case 'adesione_distretto_famiglia';
-                    $geoAttribute = 'organizzazione_aderente';
-                    break;
-                }
-
-                $geoObject = eZContentObject::fetch($hit['data'][$language][$geoAttribute]['content'][0]['id']);
-
-                if ($geoObject instanceof eZContentObject)
-                {
-
                   $properties = array(
                     'id'           => $hit['metadata']['id'],
                     'type'        => $hit['metadata']['classIdentifier'],
@@ -86,14 +71,12 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
                     'popupContent' => '<em>Loading...</em>'
                   );
 
-                  $geoDataMap = $geoObject->dataMap();
-                  if ($geoDataMap['geo']->hasContent())
+                  if (!empty($hit['data'][$language]['geo']['content']['longitude']) && !empty($hit['data'][$language]['geo']['content']['latitude']) )
                   {
-                    $geoData    = $geoDataMap['geo']->content();
-                    $feature = new DataHandlerTnFamMapMarkersGeoJsonFeature($hit['metadata']['id'], array($geoData->longitude, $geoData->latitude), $properties);
+                    $feature = new DataHandlerTnFamReverseMapMarkersGeoJsonFeature($hit['metadata']['id'], array($hit['data'][$language]['geo']['content']['longitude'], $hit['data'][$language]['geo']['content']['latitude']), $properties);
                     $featureData->add($feature);
                   }
-                }
+
               } catch (Exception $e) {
                 eZDebug::writeError($e->getMessage(), __METHOD__);
               }
@@ -127,18 +110,18 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
 
 
 
-class DataHandlerTnFamMapMarkersGeoJsonFeatureCollection
+class DataHandlerTnFamReverseMapMarkersGeoJsonFeatureCollection
 {
   public $type = 'FeatureCollection';
   public $features = array();
 
-  public function add(DataHandlerTnFamMapMarkersGeoJsonFeature $feature)
+  public function add(DataHandlerTnFamReverseMapMarkersGeoJsonFeature $feature)
   {
     $this->features[] = $feature;
   }
 }
 
-class DataHandlerTnFamMapMarkersGeoJsonFeature
+class DataHandlerTnFamReverseMapMarkersGeoJsonFeature
 {
   public $type = "Feature";
   public $id;
@@ -149,20 +132,20 @@ class DataHandlerTnFamMapMarkersGeoJsonFeature
   {
     $this->id = $id;
 
-    $this->geometry = new DataHandlerTnFamMapMarkersGeoJsonGeometry();
+    $this->geometry = new DataHandlerTnFamReverseMapMarkersGeoJsonGeometry();
     $this->geometry->coordinates = $geometryArray;
 
-    $this->properties = new DataHandlerTnFamMapMarkersGeoJsonProperties($properties);
+    $this->properties = new DataHandlerTnFamReverseMapMarkersGeoJsonProperties($properties);
   }
 }
 
-class DataHandlerTnFamMapMarkersGeoJsonGeometry
+class DataHandlerTnFamReverseMapMarkersGeoJsonGeometry
 {
   public $type = "Point";
   public $coordinates;
 }
 
-class DataHandlerTnFamMapMarkersGeoJsonProperties
+class DataHandlerTnFamReverseMapMarkersGeoJsonProperties
 {
   public function __construct(array $properties = array())
   {

@@ -4,12 +4,23 @@
 # Full
 ############################################
 
-[full_mappe]
+[full_family_audit]
 Source=node/view/full.tpl
-MatchFile=full/mappe.tpl
+MatchFile=full/family_audit.tpl
 Subdir=templates
-Match[node]=29177
+Match[node]=1187
 
+[full_family_in_trentino]
+Source=node/view/full.tpl
+MatchFile=full/family_in_trentino.tpl
+Subdir=templates
+Match[node]=1188
+
+[full_distretto_famiglia]
+Source=node/view/full.tpl
+MatchFile=full/distretto_famiglia.tpl
+Subdir=templates
+Match[node]=1191
 
 ############################################
 # Panel
@@ -31,6 +42,27 @@ Match[node]=1209
 ############################################
 # Block
 ############################################
+
+[block_family_audit]
+Source=block/view/view.tpl
+MatchFile=block/family_audit.tpl
+Subdir=templates
+Match[type]=MappaFamilyAudit
+Match[view]=default
+
+[block_family_in_trentino]
+Source=block/view/view.tpl
+MatchFile=block/family_in_trentino.tpl
+Subdir=templates
+Match[type]=MappaFamilyInTrentino
+Match[view]=default
+
+[block_distretto_famiglia]
+Source=block/view/view.tpl
+MatchFile=block/distretto_famiglia.tpl
+Subdir=templates
+Match[type]=MappaDistrettoFamiglia
+Match[view]=default
 
 [block_query_lista_num]
 Source=block/view/view.tpl
