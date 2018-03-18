@@ -1,43 +1,18 @@
-'use strict';
-jQuery(function ($) {
+(function ($) {
+
   const opendataMap = {
-    init: function () {
-      //this.loadDataTable();
+    tools: null,
+    mapId: '',
+    markersId: '',
+    map: null,
+
+    clero: function(){
+      console.log('aaaaaa');
     },
-    loadDataTable: function () {
-      this.settings.datatable.prevQuery = this.settings.datatable.ajax.query;
-      var buildedQuery = this.buildQuery();
-      this.settings.datatable.ajax.url = this._ajaxUrl + '?q=' + buildedQuery;
-      this.settings.datatable.ajax.query = buildedQuery;
-      var id = this.settings.table.id;
-      var table = $(this.settings.table.template).attr('id', id);
-      $(this.element).append(table);
-      if (this.datatable != null) {
-        this.datatable.destroy(true);
-      }
-      this.datatable = table.DataTable(this.settings.datatable);
-      if ($.isFunction(this.settings.loadDatatableCallback)) {
-        this.settings.loadDatatableCallback(this);
-      }
-    },
-    buildQuery: function (notEncoded) {
-      var query = '';
-      $.each(this.settings.builder.filters, function () {
-        if (this != null) {
-          if ($.isArray(this.value)) {
-            query += this.field + " " + this.operator + " ['" + this.value.join("','") + "']";
-            query += ' and ';
-          }
-        }
-      });
-      query += this.settings.builder.query;
-      //console.log( ' -- Query: ' + query);
-      return !notEncoded ? encodeURIComponent(query) : query;
-    },
-    buildFilterInput: function (facets, facet, cb, context) {
-      var self = this;
+
+    buildFilterInput: function(facets, facet) {
       for (var i = 0, len = facets.length; i < len; i++) {
-        var currentFilters = this.settings.builder.filters;
+        var currentFilters = this.tools.settings.builder.filters;
         var facetDefinition = facets[i];
 
         if (facetDefinition.field === facet.name && !facetDefinition.hidden) {
@@ -70,20 +45,13 @@ jQuery(function ($) {
 
           selectContainer.append(label);
           selectContainer.append(select);
-
-          self.attachFilterInput(select);
-
-          if ($.isFunction(cb)) {
-            cb.call(context, selectContainer);
-          }
+          this.attachFilterInput(select, this.tools);
+          return selectContainer;
         }
       }
-
-      return self;
     },
 
-    attachFilterInput: function ($select, cb, context) {
-      var self = this;
+    attachFilterInput: function ($select) {
       $select.chosen({width: '100%', allow_single_deselect: true}).on('change', function (e) {
         var that = $(e.currentTarget);
         var values = $(e.currentTarget).val();
@@ -91,23 +59,88 @@ jQuery(function ($) {
           values = [values]
         }
         if (values != null && values.length > 0) {
-          self.settings.builder.filters[that.data('field')] = {
+          console.log(this.tools);
+          opendataMap.tools.settings.builder.filters[that.data('field')] = {
             'field': that.data('field'),
             'operator': 'contains',
             'value': values
           };
         } else {
-          self.settings.builder.filters[that.data('field')] = null;
+          opendataMap.tools.settings.builder.filters[that.data('field')] = null;
+          console.log('elimina filtro');
         }
-        self.loadDataTable();
+        console.log(opendataMap.tools.settings.builder.filters);
+        var query = opendataMap.buildQuery(false);
+
       });
+    },
 
-      if ($.isFunction(cb)) {
-        cb.call(context, self);
+
+    buildQuery: function (notEncoded) {
+      var query = '';
+      $.each(opendataMap.tools.settings.builder.filters, function () {
+        if (this != null) {
+          console.log(this);
+          if ($.isArray(this.value)) {
+            query += this.field + " " + this.operator + " ['" + this.value.join("','") + "']";
+            query += ' and ';
+          }
+        }
+      });
+      if (opendataMap.tools.settings.builder.query != null) {
+        query += this.tools.settings.builder.query;
       }
+      console.log(' -- Query: ' + query);
+      return !notEncoded ? encodeURIComponent(query) : query;
+    },
 
-      return self;
+    loadMap: function () {
+      var endpoint = opendataMap.tools.settings.endpoint;
+      var query = opendataMap.buildQuery(false)
+      var geoJson = endpoint + '?query=' + query + '&contentType=geojson';
+
+
+      //var tiles = L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18,attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'});
+      var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      });
+      opendataMap.map = L.map(opendataMap.mapId).addLayer(tiles);
+      opendataMap.map.scrollWheelZoom.disable();
+      var markers = L.markerClusterGroup();
+      var markerMap = {};
+      $.getJSON(geoJson, function (data) {
+
+        var geoJsonLayer = L.geoJson(data.content, {
+          pointToLayer: function (feature, latlng) {
+            var customIcon = L.MakiMarkers.icon({icon: "star", color: "#f00", size: "l"});
+            var marker = L.marker(latlng, {icon: customIcon});
+            markerMap[feature.id] = marker;
+            return marker;
+          }
+        });
+        markers.addLayer(geoJsonLayer);
+        opendataMap.map.addLayer(markers);
+        opendataMap.map.fitBounds(markers.getBounds());
+      });
+      markers.on('click', function (a) {
+        $.getJSON("{/literal}{'/openpa/data/map_markers'|ezurl(no)}{literal}?contentType=marker&view=panel&id=" + a.layer.feature.id, function (data) {
+          var popup = new L.Popup({maxHeight: 360});
+          popup.setLatLng(a.layer.getLatLng());
+          popup.setContent(data.content);
+          opendataMap.map.openPopup(popup);
+        });
+      });
     }
+
+
+
+
+
+
+
   }
-  opendataMap.init();
-});
+
+  $.opendataMap = opendataMap;
+
+}(jQuery));
