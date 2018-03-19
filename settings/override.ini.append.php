@@ -4,23 +4,23 @@
 # Full
 ############################################
 
-[full_family_audit]
-Source=node/view/full.tpl
-MatchFile=full/family_audit.tpl
-Subdir=templates
-Match[node]=1187
-
-[full_family_in_trentino]
-Source=node/view/full.tpl
-MatchFile=full/family_in_trentino.tpl
-Subdir=templates
-Match[node]=1188
-
-[full_distretto_famiglia]
-Source=node/view/full.tpl
-MatchFile=full/distretto_famiglia.tpl
-Subdir=templates
-Match[node]=1191
+#[full_family_audit]
+#Source=node/view/full.tpl
+#MatchFile=full/family_audit.tpl
+#Subdir=templates
+#Match[node]=1187
+#
+#[full_family_in_trentino]
+#Source=node/view/full.tpl
+#MatchFile=full/family_in_trentino.tpl
+#Subdir=templates
+#Match[node]=1188
+#
+#[full_distretto_famiglia]
+#Source=node/view/full.tpl
+#MatchFile=full/distretto_famiglia.tpl
+#Subdir=templates
+#Match[node]=1191
 
 ############################################
 # Panel

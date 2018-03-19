@@ -11,26 +11,26 @@
 {set_defaults(hash(
 'height', 600,
 'map_type', 'osm',
-'class_identifiers', array(),
-'items_per_row', 1,
-'show_list', true()
+'show_title', true()
 ))}
 
 {set $height = $height|fix_dimension()}
 
 
-<div class="Grid">
-  <div
-    class="Grid-cell {if $show_list}{if $items_per_row|eq(1)}u-sizeFull{else} u-md-size3of4 u-lg-size3of4{/if}{else}u-sizeFull{/if}">
+<div class="openpa-widget {$block.view}">
+  {if and( $show_title, $block.name|ne('') )}
+    <h3 class="openpa-widget-title">{if and($openpa.root_node, $link_top_title)}<a href={$openpa.root_node.url_alias|ezurl()}>{/if}{$block.name|wash()}{if $openpa.root_node}</a>{/if}</h3>
+  {/if}
+  <div class="openpa-widget-content">
     <div class="content-filters"></div>
-    <div id="map-{$node.node_id}" style="height: {$height}px; width: 100%"></div>
+    <div id="map-{$block.id}" style="height: {$height}px; width: 100%"></div>
 
     <script type="text/javascript" language="javascript" class="init">
 
       var mainQuery = "classes [public_organization]";
       var siteAccess = "{"/"|ezurl(no)}";
-      var mapId = 'map-{$node.node_id}';
-      var markersId = 'markers-{$node.node_id}';
+      var mapId = 'map-{$block.id}';
+      var markersId = 'markers-{$block.id}';
 
       $.opendataTools.settings('language', 'ita-IT');
       $.opendataTools.settings('endpoint', {ldelim}

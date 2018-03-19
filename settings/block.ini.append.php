@@ -2,9 +2,9 @@
 
 [General]
 AllowedTypes[]=Query
-#AllowedTypes[]=MappaFamilyAudit
-#AllowedTypes[]=MappaFamilyInTrentino
-#AllowedTypes[]=MappaDistrettoFamiglia
+AllowedTypes[]=MappaFamilyAudit
+AllowedTypes[]=MappaFamilyInTrentino
+AllowedTypes[]=MappaDistrettoFamiglia
 
 [Query]
 Name=Lista automatica basata su query
