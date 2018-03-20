@@ -133,6 +133,17 @@ a:focus {
   color: var(--Color-black) !important;
 }
 
+/* Content */
+.Card-titleLink {
+  color: var(--Prose-color-text-primary) !important;
+  @extend .u-text-h4;
+}
+
+.Card-text > p {
+  color: var(--Prose-color-text-secondary) !important;
+}
+
+
 /* Footer */
 .valutation-container {
   background-color: #00334c;

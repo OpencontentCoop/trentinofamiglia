@@ -24,7 +24,7 @@
 
 <div class="openpa-widget {$block.view}">
   {if and( $show_title, $block.name|ne('') )}
-    <h3 class="openpa-widget-title">{if and($openpa.root_node, $link_top_title)}<a href={$openpa.root_node.url_alias|ezurl()}>{/if}{$block.name|wash()}{if $openpa.root_node}</a>{/if}</h3>
+    <h3 class="openpa-widget-title">{$block.name|wash()}</h3>
   {/if}
   <div class="openpa-widget-content">
     <div class="content-filters"></div>
@@ -32,10 +32,15 @@
 
     <script type="text/javascript" language="javascript" class="init">
 
-      var mainQuery = "(raw[subattr_organizzazione_aderente___lat____s] = '*' and raw[subattr_organizzazione_aderente___lon____s] = '*') and classes [adesione_distretto_famiglia]";
+      var mainQuery = "{$block.custom_attributes.query|trim()}";
       var siteAccess = "{"/"|ezurl(no)}";
       var mapId = 'map-{$block.id}';
       var markersId = 'markers-{$block.id}';
+      {*{field: 'stato_certificazione', 'limit': 100, 'sort': 'alpha', name: 'Stato certificazione'},
+      {field: 'sperimentazione', 'limit': 100, 'sort': 'alpha', name: 'Tipo di sperimentazione'}*}
+      var facets = [{$block.custom_attributes.facets|trim()}];
+      var classIdentifier = '{$block.custom_attributes.class|trim()}';
+      var attribute = '{$block.custom_attributes.attribute|trim()}';
 
       $.opendataTools.settings('language', 'ita-IT');
       $.opendataTools.settings('endpoint', {ldelim}
@@ -44,13 +49,7 @@
         "class": "{'/opendata/api/classes/'|ezurl(no)}"
       {rdelim});
 
-
       {literal}
-
-      var facets = [
-        {field: 'distretto.name', 'limit': 100, 'sort': 'alpha', name: 'Distretto'}
-      ];
-
       $(document).ready(function () {
         var opendataMap = $.opendataMap;
         opendataMap.tools = $.opendataTools;
@@ -62,12 +61,19 @@
             "query": mainQuery,
             "filters": {}
           },
-          "endpoint": {/literal}'{"/openpa/data/tn_fam_map_markers"|ezurl(no)}'{literal}
+          "endpoint": {/literal}'{"/openpa/data/tn_fam_reverse_map_markers"|ezurl(no)}'
+          {literal}
         });
 
         opendataMap.mapId = mapId;
         opendataMap.markersId = markersId;
+        opendataMap.parameters = [
+          {"key": "classIdentifier", "value": classIdentifier},
+          {"key": "attribute", "value": attribute},
+          {"key": "contentType", "value": "geojson"}
+        ];
         opendataMap.loadMap();
+        {/literal}
       });
     </script>
 

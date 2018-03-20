@@ -9,85 +9,109 @@ class DataHandlerTnFamReverseMapMarkers implements OpenPADataHandlerInterface
 {
   public $contentType = 'geojson';
 
+  private $contentRepository;
+
+  private $contentSearch;
+
+  private $currentEnvironment;
+
   public function __construct(array $Params)
   {
-    $this->contentType = eZHTTPTool::instance()->getVariable('contentType', $this->contentType);
+      $this->contentType = eZHTTPTool::instance()->getVariable('contentType', $this->contentType);
+      $this->contentRepository = new ContentRepository();
+      $this->contentSearch = new ContentSearch();
 
+      $this->currentEnvironment = new FullEnvironmentSettings();
+      $parser = new ezpRestHttpRequestParser();
+      $request = $parser->createRequest();
+      $this->currentEnvironment->__set('request', $request);
+
+      $this->contentRepository->setEnvironment($this->currentEnvironment);
+      $this->contentSearch->setEnvironment($this->currentEnvironment);
+
+  }
+
+  private function findAll($query, $languageCode = null, array $limitation = null)
+  {
+      $hits = array();
+      $count = 0;
+      $facets = array();
+      $query .= ' and limit ' . $this->currentEnvironment->getMaxSearchLimit();
+      eZDebug::writeNotice($query, __METHOD__);
+      while ($query) {
+          $results = $this->contentSearch->search($query, $limitation);
+          $count = $results->totalCount;
+          $hits = array_merge($hits, $results->searchHits);
+          $facets = $results->facets;
+          $query = $results->nextPageQuery;
+      }
+
+      $result = new \Opencontent\Opendata\Api\Values\SearchResults();
+      $result->searchHits = $hits;
+      $result->totalCount = $count;
+      $result->facets = $facets;
+
+      return $result;
   }
 
   public function getData()
   {
     if ($this->contentType == 'geojson') {
-      $parentNode = eZHTTPTool::instance()->getVariable('parentNode', 0);
       $featureData = new DataHandlerTnFamReverseMapMarkersGeoJsonFeatureCollection();
 
-      $contentRepository = new ContentRepository();
-      $contentSearch = new ContentSearch();
+      if (eZHTTPTool::instance()->hasGetVariable('classIdentifier') && eZHTTPTool::instance()->hasGetVariable('attribute')) {
+        $classIdentifier = eZHTTPTool::instance()->getVariable('classIdentifier');
+        $attribute = eZHTTPTool::instance()->getVariable('attribute');
+        $query = "classes [$classIdentifier]";
+        $language = eZLocale::currentLocaleCode();
 
-      $currentEnvironment = new FullEnvironmentSettings();
-      $contentRepository->setEnvironment( $currentEnvironment );
-      $contentSearch->setEnvironment( $currentEnvironment );
+        $data = $this->findAll($query, $language);
+        $objIds = array();
 
-      $parser = new ezpRestHttpRequestParser();
-      $request = $parser->createRequest();
-      $currentEnvironment->__set('request', $request);
-
-      $language = eZLocale::currentLocaleCode();
-      $query = 'classes [certificazione_familyintrentino] limit 500';
-      $data = $contentSearch->search($query);
-
-      $objIds = array();
-
-      if ($data->totalCount > 0)
-      {
-        foreach ($data->searchHits as $hit) {
-          $objIds []= $hit['data'][$language]['id_unico']['content'][0]['id'];
+        if ($data->totalCount > 0) {
+          foreach ($data->searchHits as $hit) {
+            $objIds [] = $hit['data'][$language][$attribute]['content'][0]['id'];
+          }
         }
-      }
-      array_unique($objIds);
+        array_unique($objIds);
 
+        if (eZHTTPTool::instance()->hasGetVariable('query')) {
+          $result = false;
+          $query = eZHTTPTool::instance()->getVariable('query');
+          try {
+            $data = $this->findAll($query, $language);
 
-      if ( isset($request->get) /*$parentNode > 0*/) {
-        $result = false;
-        //$classIdentifiers = eZHTTPTool::instance()->getVariable('classIdentifiers', false);
-        //$query = "classes [certificazione_familyaudit] subtree [{$parentNode}] limit 500 facets [stato_certificazione|alpha|100]";
-        $query = $request->get['query'] . ' and raw[meta_id_si] in  ['. implode(',', $objIds) .'] limit 500';
+            if ($data->totalCount > 0) {
+              $result['facets'] = $data->facets;
 
-        try {
-          $data = $contentSearch->search($query);
-
-          if ($data->totalCount > 0)
-          {
-            $result['facets'] = $data->facets;
-
-            foreach ($data->searchHits as $hit) {
-              try {
+              foreach ($data->searchHits as $hit) {
+                try {
                   $properties = array(
-                    'id'           => $hit['metadata']['id'],
-                    'type'        => $hit['metadata']['classIdentifier'],
-                    'class'        => $hit['metadata']['classIdentifier'],
-                    'name'         => $hit['metadata']['name'][$language],
-                    'url'          => '/content/view/full/' . $hit['metadata']['mainNodeId'],
+                    'id' => $hit['metadata']['id'],
+                    'type' => $hit['metadata']['classIdentifier'],
+                    'class' => $hit['metadata']['classIdentifier'],
+                    'name' => $hit['metadata']['name'][$language],
+                    'url' => '/content/view/full/' . $hit['metadata']['mainNodeId'],
                     'popupContent' => '<em>Loading...</em>'
                   );
 
-                  if (!empty($hit['data'][$language]['geo']['content']['longitude']) && !empty($hit['data'][$language]['geo']['content']['latitude']) )
-                  {
+                  if (!empty($hit['data'][$language]['geo']['content']['longitude']) && !empty($hit['data'][$language]['geo']['content']['latitude'])) {
                     $feature = new DataHandlerTnFamReverseMapMarkersGeoJsonFeature($hit['metadata']['id'], array($hit['data'][$language]['geo']['content']['longitude'], $hit['data'][$language]['geo']['content']['latitude']), $properties);
                     $featureData->add($feature);
                   }
 
-              } catch (Exception $e) {
-                eZDebug::writeError($e->getMessage(), __METHOD__);
+                } catch (Exception $e) {
+                  eZDebug::writeError($e->getMessage(), __METHOD__);
+                }
               }
+
+              $result['content'] = $featureData;
+              return $result;
             }
 
-            $result['content'] = $featureData;
-            return $result;
+          } catch (Exception $e) {
+            eZDebug::writeError($e->getMessage() . " in query $query", __METHOD__);
           }
-
-        } catch (Exception $e) {
-          eZDebug::writeError($e->getMessage() . " in query $query", __METHOD__);
         }
       }
     } elseif ($this->contentType == 'marker') {

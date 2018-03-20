@@ -1,12 +1,18 @@
 {ezscript_require( array(
 'leaflet/leaflet.0.7.2.js',
 'ezjsc::jquery',
+'plugins/chosen.jquery.js',
 'leaflet/leaflet.markercluster.js',
 'leaflet/Leaflet.MakiMarkers.js',
 'jquery.opendataTools.js',
 'jquery.opendataMap.js'
 ) )}
-{ezcss_require( array( 'plugins/leaflet/leaflet.css', 'plugins/leaflet/map.css', 'MarkerCluster.css', 'MarkerCluster.Default.css' ) )}
+{ezcss_require( array(
+'plugins/chosen.css',
+'plugins/leaflet/leaflet.css',
+'plugins/leaflet/map.css',
+'MarkerCluster.css',
+'MarkerCluster.Default.css' ) )}
 
 {set_defaults(hash(
 'height', 600,
@@ -26,18 +32,17 @@
 
     <script type="text/javascript" language="javascript" class="init">
 
-      var mainQuery = "classes [certificazione_familyaudit] subtree [1254]";
+      var mainQuery = "(raw[subattr_id_unico___lat____s] = '*' and raw[subattr_id_unico___lon____s] = '*') and classes [certificazione_familyaudit]";
       var siteAccess = "{"/"|ezurl(no)}";
       var mapId = 'map-{$block.id}';
       var markersId = 'markers-{$block.id}';
 
       $.opendataTools.settings('language', 'ita-IT');
       $.opendataTools.settings('endpoint', {ldelim}
-        geo: "{'/opendata/api/geo/search/'|ezurl(no)}",
-        search: "{'/opendata/api/content/search/'|ezurl(no)}",
-        class: "{'/opendata/api/classes/'|ezurl(no)}",
-        {rdelim});
-
+        "geo": "{'/opendata/api/geo/search/'|ezurl(no)}",
+        "search": "{'/opendata/api/content/search/'|ezurl(no)}",
+        "class": "{'/opendata/api/classes/'|ezurl(no)}"
+      {rdelim});
 
       {literal}
 
@@ -50,6 +55,8 @@
         var opendataMap = $.opendataMap;
         opendataMap.tools = $.opendataTools;
 
+        mainQuery += ' facets [' + opendataMap.tools.buildFacetsString(facets) + ']';
+
         opendataMap.tools.settings = $.extend(true, {}, {
           "builder": {
             "query": mainQuery,
@@ -60,16 +67,6 @@
 
         opendataMap.mapId = mapId;
         opendataMap.markersId = markersId;
-
-        mainQuery += ' facets [' + opendataMap.tools.buildFacetsString(facets) + ']';
-
-        opendataMap.tools.find(mainQuery + ' limit 1', function (response) {
-          var form = $('<form class="form">');
-          $.each(response.facets, function () {
-            form.append( opendataMap.buildFilterInput(facets, this) );
-          });
-          $('.content-filters').append(form).show();
-        });
         opendataMap.loadMap();
       });
     </script>

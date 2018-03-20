@@ -6,8 +6,6 @@
   {include uri=$openpa.content_tools.template}
 {/if}
 
-{def $contact_points = array()}
-
 {if $openpa.control_menu.side_menu.root_node}
   {def $tree_menu = tree_menu( hash( 'root_node_id', $openpa.control_menu.side_menu.root_node.node_id, 'user_hash', $openpa.control_menu.side_menu.user_hash, 'scope', 'side_menu' ))
   $show_left = and( $openpa.control_menu.show_side_menu, count( $tree_menu.children )|gt(0) )}
@@ -29,76 +27,20 @@
 
       {include uri=$openpa.content_contacts.template}
 
-      {* Contatti *}
-      {if $node.data_map.punti_di_contatto_on_line.has_content}
-        {foreach $node.data_map.punti_di_contatto_on_line.content.relation_list as $l}
-
-          {def $contact_point = fetch( 'content', 'node', hash( 'node_id', $l.node_id ) )}
-          {set $contact_points = $contact_points|append($contact_point)}
-          {undef $contact_point}
-        {/foreach}
-      {/if}
-
-      {if $contact_points|count()|gt(0)}
-        <section class="Prose Alert Alert--info u-margin-bottom-l">
-          <div class="Grid Grid--withGutter">
-            {foreach $contact_points as $c}
-              {if $c.data_map.pec.has_content}
-                <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
-                  <strong>{$c.data_map.pec.contentclass_attribute.name}: </strong>
-                </div>
-                <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
-                  {attribute_view_gui attribute=$c.data_map.pec}
-                </div>
-              {/if}
-
-              {if $c.data_map.fax.has_content}
-                <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
-                  <strong>{$c.data_map.fax.contentclass_attribute.name}: </strong>
-                </div>
-                <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
-                  {attribute_view_gui attribute=$c.data_map.fax}
-                </div>
-              {/if}
-
-              {if $c.data_map.telefono.has_content}
-                <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
-                  <strong>{$c.data_map.telefono.contentclass_attribute.name}: </strong>
-                </div>
-                <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
-                  {attribute_view_gui attribute=$c.data_map.telefono}
-                </div>
-              {/if}
-
-              {if $c.data_map.cellulare.has_content}
-                <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
-                  <strong>{$c.data_map.cellulare.contentclass_attribute.name}: </strong>
-                </div>
-                <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
-                  {attribute_view_gui attribute=$c.data_map.cellulare}
-                </div>
-              {/if}
-              {if $c.data_map.sito_web.has_content}
-                <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
-                  <strong>{$c.data_map.sito_web.contentclass_attribute.name}: </strong>
-                </div>
-                <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
-                  {attribute_view_gui attribute=$c.data_map.sito_web}
-                </div>
-              {/if}
-            {/foreach}
-          </div>
-        </section>
-      {/if}
+      {include uri='design:openpa/full/parts/exploded_contact_points.tpl' attribute_name='punti_di_contatto_on_line' hide_title=$openpa.content_contacts.has_content}
 
       {include uri=$openpa.content_detail.template}
 
       {include uri=$openpa.content_infocollection.template}
 
       {* Certificazione family Audit*}
-      {def $search_reverse_related = fetch('ezfind','search', hash('limit',100,'filter',array(concat('certificazione_familyaudit',"/",'id_unico',"/id:",$node.object.id))))
-      $objects = $search_reverse_related.SearchResult
-      $objects_count = $search_reverse_related.SearchCount}
+      {def $search_reverse_related = fetch('ezfind','search', hash(
+              'limit',100,
+              'class_id', array('certificazione_familyaudit'),
+              'filter', array(concat(solr_meta_subfield('id_unico','id'),":",$node.object.id))
+           ))
+           $objects = $search_reverse_related.SearchResult
+           $objects_count = $search_reverse_related.SearchCount}
 
       <h3 class="u-text-h3 u-margin-top-m">Certificazioni</h3>
       {if $objects_count|gt(0)}
@@ -152,9 +94,13 @@
       {undef $search_reverse_related $objects $objects_count}
 
       {* Certificazione family in Trentino*}
-      {def $search_reverse_related = fetch('ezfind','search', hash('limit',100,'filter',array(concat('certificazione_familyintrentino',"/",'id_unico',"/id:",$node.object.id))))
-      $objects = $search_reverse_related.SearchResult
-      $objects_count = $search_reverse_related.SearchCount}
+      {def $search_reverse_related = fetch('ezfind','search', hash(
+              'limit',100,
+              'class_id', array('certificazione_familyintrentino'),
+              'filter', array(concat(solr_meta_subfield('id_unico','id'),":",$node.object.id))
+           ))
+           $objects = $search_reverse_related.SearchResult
+           $objects_count = $search_reverse_related.SearchCount}
 
       {if $objects_count|gt(0)}
         <table class="Table Table--compact reverse-related" cellspacing="0">
@@ -187,10 +133,14 @@
       {/if}
       {undef $search_reverse_related $objects $objects_count}
 
-      {* Certificazione family in Trentino*}
-      {def $search_reverse_related = fetch('ezfind','search', hash('limit',100,'filter',array(concat('adesione_distretto_famiglia',"/",'organizzazione_aderente',"/id:",$node.object.id))))
-      $objects = $search_reverse_related.SearchResult
-      $objects_count = $search_reverse_related.SearchCount}
+      {* Distretto famiglia*}
+      {def $search_reverse_related = fetch('ezfind','search', hash(
+              'limit',100,
+              'class_id', array('adesione_distretto_famiglia'),
+              'filter', array(concat(solr_meta_subfield('organizzazione_aderente','id'),":",$node.object.id))
+           ))
+           $objects = $search_reverse_related.SearchResult
+           $objects_count = $search_reverse_related.SearchCount}
 
       {if $objects_count|gt(0)}
         <h3 class="u-text-h3 u-margin-top-m">Adesioni</h3>

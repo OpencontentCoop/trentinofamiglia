@@ -25,6 +25,7 @@ class BlockHandlerQuery extends OpenPABlockHandler
         $query = false;
         if (isset( $this->currentCustomAttributes['query'] )) {
         	$query = (string)$this->currentCustomAttributes['query'];
+            eZDebug::writeDebug($query, __METHOD__);
         }
 
         $language = eZLocale::currentLocaleCode();
@@ -36,22 +37,21 @@ class BlockHandlerQuery extends OpenPABlockHandler
         try{
         	$data = $contentSearch->search($query);
 
-        	$nodeIdList = array();
+        	$nodes = array();
         	foreach ($data->searchHits as $hit) {
         		try{
-        			$content = new Content($hit); 		        			
-    				$nodeIdList[] = $content->metadata->mainNodeId;
+        			$content = new Content($hit);
+                    $object = $content->getContentObject($language);
+                    if ($object instanceof eZContentObject){
+    				    $nodes[] = $object->mainNode();
+                    }
 				}catch(Exception $e){
 		        	eZDebug::writeError($e->getMessage(), __METHOD__);
 		        }
         	}
 
-        	if (!empty($nodeIdList)){
-        		$nodes = eZContentObjectTreeNode::fetch($nodeIdList);	
-        		if (!is_array($nodes)){
-        			$nodes = array($nodes);
-        		}
-        		$this->data['has_content'] = count($nodeIdList) > 0;
+        	if (!empty($nodes)){        		
+        		$this->data['has_content'] = count($nodes) > 0;
         		$this->data['content'] = $nodes;
         		$this->data['root_node'] = $this->data['content'][0];
         	}        

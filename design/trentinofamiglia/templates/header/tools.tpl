@@ -58,6 +58,15 @@
                         </a>
                     </li>
                 {/if}
+              <li>
+                <a href="http://trentinofamiglia.voxmail.it/user/register" target="_blank">
+                            <span class="openpa-icon fa-stack">
+                                <i class="fa fa-circle fa-stack-2x u-color-90"></i>
+                                <i class="fa fa-envelope fa-stack-1x u-color-white" aria-hidden="true"></i>
+                            </span>
+                  <span class="u-hiddenVisually">Newletter</span>
+                </a>
+              </li>
             </ul>
         {/if}
     </div>

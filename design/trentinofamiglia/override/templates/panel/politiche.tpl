@@ -20,7 +20,7 @@
   </style>
 {/literal}
 
-
+{def $openpa = object_handler($node)}
 
 <div class="openpa-panel politiche {$node|access_style}">
 

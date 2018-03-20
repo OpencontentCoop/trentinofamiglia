@@ -6,10 +6,7 @@
     markersId: '',
     markers: null,
     map: null,
-
-    clero: function(){
-      console.log('aaaaaa');
-    },
+    parameters: [],
 
     buildFilterInput: function(facets, facet) {
       for (var i = 0, len = facets.length; i < len; i++) {
@@ -30,8 +27,8 @@
 
           $.each(facetDefinition.data, function (value, count) {
             if (value.length > 0) {
-              var quotedValue = facetDefinition.field.search("extra_") > -1 ? encodeURIComponent('"' + value + '"') : value;
-              var option = $('<option value="' + quotedValue + '">' + value + ' (' + count + ')</option>');
+              var quotedValue = encodeURIComponent('"' + value + '"');
+              var option = $('<option value="' + quotedValue + '" data-value="'+value+'">' + value + ' (' + count + ')</option>');
               if (currentFilters[facetDefinition.field]
                 && currentFilters[facetDefinition.field].value
                 && $.inArray(quotedValue, currentFilters[facetDefinition.field].value) > -1) {
@@ -79,7 +76,6 @@
       var query = '';
       $.each(opendataMap.tools.settings.builder.filters, function () {
         if (this != null) {
-          console.log(this);
           if ($.isArray(this.value)) {
             query += this.field + " " + this.operator + " ['" + this.value.join("','") + "']";
             query += ' and ';
@@ -94,10 +90,6 @@
     },
 
     loadMap: function () {
-      var endpoint = opendataMap.tools.settings.endpoint;
-      var query = opendataMap.buildQuery(false)
-      var geoJson = endpoint + '?query=' + query + '&contentType=geojson';
-
       var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -111,7 +103,11 @@
     loadMarkersInMap:  function(){
       var endpoint = opendataMap.tools.settings.endpoint;
       var query = opendataMap.buildQuery(true);
-      var geoJson = endpoint + '?query=' + query + '&contentType=geojson';
+      var parameters = "";
+      $.each( opendataMap.parameters, function (i, v) {
+        parameters = parameters + '&' + v.key + '=' + v.value;
+      });
+      var geoJson = endpoint + '?query=' + query + parameters;
 
       if (opendataMap.map) {
         opendataMap.markers.clearLayers();
@@ -130,6 +126,17 @@
           opendataMap.markers.addLayer(geoJsonLayer);
           opendataMap.map.addLayer(opendataMap.markers);
           opendataMap.map.fitBounds(opendataMap.markers.getBounds());
+
+          console.log(opendataMap.markers.getBounds());
+
+          $('.content-filters').find('.form').remove();
+          var form = $('<form class="form">');
+          $.each(data.facets, function () {
+            form.append( opendataMap.buildFilterInput(facets, this) );
+          });
+          $('.content-filters').append(form).show();
+
+
         });
         opendataMap.markers.on('click', function (a) {
           $.getJSON( endpoint + "?contentType=marker&view=panel&id=" + a.layer.feature.id, function (data) {

@@ -5,6 +5,8 @@ AllowedTypes[]=Query
 AllowedTypes[]=MappaFamilyAudit
 AllowedTypes[]=MappaFamilyInTrentino
 AllowedTypes[]=MappaDistrettoFamiglia
+AllowedTypes[]=MappaTnFam
+AllowedTypes[]=MappaTnFamReverse
 
 [Query]
 Name=Lista automatica basata su query
@@ -65,6 +67,48 @@ ItemsPerRow[]
 Name=Mappa Distretto Famiglia
 ManualAddingOfItems=disabled
 CustomAttributes[]
+ViewList[]
+ViewList[]=default
+ViewName[]
+ViewName[default]=Default
+ItemsPerRow[]
+
+[MappaTnFam]
+Name=Mappa Trentino Famiglia (related object)
+ManualAddingOfItems=disabled
+CustomAttributes[]
+CustomAttributes[]=query
+CustomAttributes[]=facets
+CustomAttributes[]=attribute
+CustomAttributeNames[]
+CustomAttributeNames[query]=Query
+CustomAttributeNames[facets]=Facets
+CustomAttributeNames[attribute]=Indenficatore attributo relazione
+CustomAttributeTypes[]
+CustomAttributeTypes[query]=text
+CustomAttributeTypes[facets]=text
+ViewList[]
+ViewList[]=default
+ViewName[]
+ViewName[default]=Default
+ItemsPerRow[]
+
+[MappaTnFamReverse]
+Name=Mappa Trentino Famiglia (reverse related object)
+ManualAddingOfItems=disabled
+CustomAttributes[]
+CustomAttributes[]=query
+CustomAttributes[]=facets
+CustomAttributes[]=class
+CustomAttributes[]=attribute
+CustomAttributeNames[]
+CustomAttributeNames[query]=Query
+CustomAttributeNames[facets]=Facets
+CustomAttributeNames[class]=Classe in relazione inversa
+CustomAttributeNames[attribute]=Indenficatore attributo classe in relazione inversa
+CustomAttributeTypes[]
+CustomAttributeTypes[query]=text
+CustomAttributeTypes[facets]=text
 ViewList[]
 ViewList[]=default
 ViewName[]

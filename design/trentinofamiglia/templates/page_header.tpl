@@ -10,6 +10,6 @@
     {include uri='design:header/banner.tpl'}
 {/if}
 *}
-{if and( is_area_tematica(), array( 'edit', 'browse' )|contains( $ui_context )|not() )}
+{*{if and( is_area_tematica(), array( 'edit', 'browse' )|contains( $ui_context )|not() )}
     {include uri='design:header/banner.tpl'}
-{/if}
+{/if}*}

@@ -9,99 +9,99 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
 {
   public $contentType = 'geojson';
 
+  private $contentRepository;
+
+  private $contentSearch;
+
+  private $currentEnvironment;
+
   public function __construct(array $Params)
   {
     $this->contentType = eZHTTPTool::instance()->getVariable('contentType', $this->contentType);
+    $this->contentRepository = new ContentRepository();
+    $this->contentSearch = new ContentSearch();
 
+    $this->currentEnvironment = new FullEnvironmentSettings();
+    $parser = new ezpRestHttpRequestParser();
+    $request = $parser->createRequest();
+    $this->currentEnvironment->__set('request', $request);
+
+    $this->contentRepository->setEnvironment($this->currentEnvironment);
+    $this->contentSearch->setEnvironment($this->currentEnvironment);
+
+  }
+
+  private function findAll($query, $languageCode = null, array $limitation = null)
+  {
+    $hits = array();
+    $count = 0;
+    $facets = array();
+    $query .= ' and limit ' . $this->currentEnvironment->getMaxSearchLimit();
+    eZDebug::writeNotice($query, __METHOD__);
+    while ($query) {
+      $results = $this->contentSearch->search($query, $limitation);
+      $count = $results->totalCount;
+      $hits = array_merge($hits, $results->searchHits);
+      $facets = $results->facets;
+      $query = $results->nextPageQuery;
+    }
+
+    $result = new \Opencontent\Opendata\Api\Values\SearchResults();
+    $result->searchHits = $hits;
+    $result->totalCount = $count;
+    $result->facets = $facets;
+
+    return $result;
   }
 
   public function getData()
   {
     if ($this->contentType == 'geojson') {
-      $parentNode = eZHTTPTool::instance()->getVariable('parentNode', 0);
       $featureData = new DataHandlerTnFamMapMarkersGeoJsonFeatureCollection();
 
-
-
-      $contentRepository = new ContentRepository();
-      $contentSearch = new ContentSearch();
-
-      $currentEnvironment = new FullEnvironmentSettings();
-      $contentRepository->setEnvironment( $currentEnvironment );
-      $contentSearch->setEnvironment( $currentEnvironment );
-
-      $parser = new ezpRestHttpRequestParser();
-      $request = $parser->createRequest();
-      $currentEnvironment->__set('request', $request);
-
       $query = false;
-      /*if (isset( $this->currentCustomAttributes['query'] )) {
-        $query = (string)$this->currentCustomAttributes['query'];
-      }*/
 
+      if (eZHTTPTool::instance()->hasGetVariable('query') && eZHTTPTool::instance()->hasGetVariable('attribute')) {
 
-      if ( isset($request->get) /*$parentNode > 0*/) {
         $result = false;
-        //$classIdentifiers = eZHTTPTool::instance()->getVariable('classIdentifiers', false);
-
-        //$query = "classes [certificazione_familyaudit] subtree [{$parentNode}] limit 500 facets [stato_certificazione|alpha|100]";
-        $query = $request->get['query'] . ' limit 500';
-
+        $query = eZHTTPTool::instance()->getVariable('query');
+        $attribute = eZHTTPTool::instance()->getVariable('attribute');
         $language = eZLocale::currentLocaleCode();
         try {
-          $data = $contentSearch->search($query);
+          $data = $this->findAll($query, $language);
 
+          $result['facets'] = $data->facets;
 
+          foreach ($data->searchHits as $hit) {
+            try {
+              $geoObject = eZContentObject::fetch($hit['data'][$language][$attribute]['content'][0]['id']);
 
-          if ($data->totalCount > 0)
-          {
-            $result['facets'] = $data->facets;
+              if ($geoObject instanceof eZContentObject) {
+                $properties = array(
+                  'id' => $hit['metadata']['id'],
+                  'type' => $hit['metadata']['classIdentifier'],
+                  'class' => $hit['metadata']['classIdentifier'],
+                  'name' => $hit['metadata']['name'][$language],
+                  'url' => '/content/view/full/' . $hit['metadata']['mainNodeId'],
+                  'popupContent' => '<em>Loading...</em>'
+                );
 
-            foreach ($data->searchHits as $hit) {
-              try {
-
-                $geoAttribute = '';
-                switch ($hit['metadata']['classIdentifier'])
-                {
-                  case 'certificazione_familyaudit';
-                    $geoAttribute = 'id_unico';
-                    break;
-
-                  case 'adesione_distretto_famiglia';
-                    $geoAttribute = 'organizzazione_aderente';
-                    break;
+                $geoDataMap = $geoObject->dataMap();
+                if ($geoDataMap['geo']->hasContent()) {
+                  $geoData = $geoDataMap['geo']->content();
+                  $feature = new DataHandlerTnFamMapMarkersGeoJsonFeature($hit['metadata']['id'],
+                    array($geoData->longitude, $geoData->latitude), $properties);
+                  $featureData->add($feature);
                 }
-
-                $geoObject = eZContentObject::fetch($hit['data'][$language][$geoAttribute]['content'][0]['id']);
-
-                if ($geoObject instanceof eZContentObject)
-                {
-
-                  $properties = array(
-                    'id'           => $hit['metadata']['id'],
-                    'type'        => $hit['metadata']['classIdentifier'],
-                    'class'        => $hit['metadata']['classIdentifier'],
-                    'name'         => $hit['metadata']['name'][$language],
-                    'url'          => '/content/view/full/' . $hit['metadata']['mainNodeId'],
-                    'popupContent' => '<em>Loading...</em>'
-                  );
-
-                  $geoDataMap = $geoObject->dataMap();
-                  if ($geoDataMap['geo']->hasContent())
-                  {
-                    $geoData    = $geoDataMap['geo']->content();
-                    $feature = new DataHandlerTnFamMapMarkersGeoJsonFeature($hit['metadata']['id'], array($geoData->longitude, $geoData->latitude), $properties);
-                    $featureData->add($feature);
-                  }
-                }
-              } catch (Exception $e) {
-                eZDebug::writeError($e->getMessage(), __METHOD__);
               }
+            } catch (Exception $e) {
+              eZDebug::writeError($e->getMessage(), __METHOD__);
             }
-
-            $result['content'] = $featureData;
-            return $result;
           }
+
+          $result['content'] = $featureData;
+
+          return $result;
 
         } catch (Exception $e) {
           eZDebug::writeError($e->getMessage() . " in query $query", __METHOD__);
@@ -120,11 +120,13 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
       } else {
         $data = array('content' => '<em>Private</em>');
       }
+
       return $data;
     }
+
+    return null;
   }
 }
-
 
 
 class DataHandlerTnFamMapMarkersGeoJsonFeatureCollection

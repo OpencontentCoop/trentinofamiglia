@@ -43,6 +43,20 @@ Match[node]=1209
 # Block
 ############################################
 
+[block_mappa_tn_fam]
+Source=block/view/view.tpl
+MatchFile=block/mappa_tn_fam.tpl
+Subdir=templates
+Match[type]=MappaTnFam
+Match[view]=default
+
+[block_mappa_tn_fam_reverse]
+Source=block/view/view.tpl
+MatchFile=block/mappa_tn_fam_reverse.tpl
+Subdir=templates
+Match[type]=MappaTnFamReverse
+Match[view]=default
+
 [block_family_audit]
 Source=block/view/view.tpl
 MatchFile=block/family_audit.tpl

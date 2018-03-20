@@ -20,7 +20,7 @@
   </style>
 {/literal}
 
-
+{def $openpa = object_handler($node)}
 
 <div class="openpa-panel certificazioni {$node|access_style}">
 

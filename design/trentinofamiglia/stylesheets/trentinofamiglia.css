@@ -46,3 +46,64 @@
 .reverse-related tr td p {
   padding-bottom: 5px;
 }
+
+
+.openpa-panel {
+  width: 100%;
+}
+
+.news-tags {
+  position: fixed;
+  bottom: 0;
+  margin-bottom: 40px;
+}
+
+.certificazioni-reti .Megamenu--default {
+  background-color: #51a1c2 !important;
+}
+
+.certificazioni-reti .maincontent a {
+  color: #51a1c2 !important;
+}
+
+.certificazioni-reti .openpa-panel {
+  border-top: 0;
+  border-color: #51a1c2;
+  position: relative;
+}
+
+.certificazioni-reti .openpa-panel:after {
+  background: linear-gradient(to right, #ccc 15%,#fff 15%, #fff 30%, #51a1c2 30%);
+  position: absolute;
+  content: '';
+  height: 10px;
+  right: 0;
+  left: 0;
+  top: 0;
+}
+
+.politiche-familiari .Megamenu--default {
+  background-color: #ba6c68 !important;
+}
+
+.politiche-familiari .maincontent a {
+  color: #ba6c68 !important;
+}
+
+.politiche-familiari .openpa-panel {
+  border-top: 0;
+  border-color: #ba6c68;
+  position: relative;
+}
+
+.politiche-familiari .openpa-panel:after {
+  background: linear-gradient(to right, #ccc 15%,#fff 15%, #fff 30%, #ba6c68 30%);
+  position: absolute;
+  content: '';
+  height: 10px;
+  right: 0;
+  left: 0;
+  top: 0;
+}
+
+
