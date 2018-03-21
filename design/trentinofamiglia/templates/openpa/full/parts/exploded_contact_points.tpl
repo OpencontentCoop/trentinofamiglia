@@ -18,11 +18,12 @@
 
 {if $contact_points|count()|gt(0)}
   {if $hide_title|not()}
-    <h3 class="u-text-h3"> Contatti</h3>
+    <h3 class="u-text-h3"><i class="fa fa-comments-o fa-lg"></i> Contatti</h3>
   {/if}
   <section class="Prose Alert Alert--info u-margin-bottom-l">
     <div class="Grid Grid--withGutter">
       {foreach $contact_points as $c}
+        <h3 class="u-text-h5"> {$node.name}</h3>
         {if $c.data_map.pec.has_content}
           <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
             <strong>{$c.data_map.pec.contentclass_attribute.name}: </strong>

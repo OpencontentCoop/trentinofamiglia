@@ -77,7 +77,8 @@ class DataHandlerTnFamReverseMapMarkers implements OpenPADataHandlerInterface
 
         if (eZHTTPTool::instance()->hasGetVariable('query')) {
           $result = false;
-          $query = eZHTTPTool::instance()->getVariable('query');
+          $query  = eZHTTPTool::instance()->getVariable('query');
+          $query .= ' and raw[meta_id_si] in  ['. implode(',', $objIds) .']';
           try {
             $data = $this->findAll($query, $language);
 

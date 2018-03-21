@@ -59,41 +59,52 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
     if ($this->contentType == 'geojson') {
       $featureData = new DataHandlerTnFamMapMarkersGeoJsonFeatureCollection();
 
-      $query = false;
-
       if (eZHTTPTool::instance()->hasGetVariable('query') && eZHTTPTool::instance()->hasGetVariable('attribute')) {
-
         $result = false;
         $query = eZHTTPTool::instance()->getVariable('query');
-        $attribute = eZHTTPTool::instance()->getVariable('attribute');
+        $attributes = explode(',', eZHTTPTool::instance()->getVariable('attribute'));
         $language = eZLocale::currentLocaleCode();
+
         try {
           $data = $this->findAll($query, $language);
-
           $result['facets'] = $data->facets;
 
           foreach ($data->searchHits as $hit) {
             try {
-              $geoObject = eZContentObject::fetch($hit['data'][$language][$attribute]['content'][0]['id']);
+              foreach ($attributes as $attribute)
+              {
+                if (isset($hit['data'][$language][$attribute]))
+                {
+                  foreach ($hit['data'][$language][$attribute]['content'] as $gObject)
+                  {
+                    $geoObjectId = $gObject['id'];
+                    $geoObject = eZContentObject::fetch($geoObjectId);
 
-              if ($geoObject instanceof eZContentObject) {
-                $properties = array(
-                  'id' => $hit['metadata']['id'],
-                  'type' => $hit['metadata']['classIdentifier'],
-                  'class' => $hit['metadata']['classIdentifier'],
-                  'name' => $hit['metadata']['name'][$language],
-                  'url' => '/content/view/full/' . $hit['metadata']['mainNodeId'],
-                  'popupContent' => '<em>Loading...</em>'
-                );
+                    if ($geoObject instanceof eZContentObject) {
+                      $properties = array(
+                        /*'id' => $hit['metadata']['id'],*/
+                        'id' => $geoObjectId,
+                        'type' => $hit['metadata']['classIdentifier'],
+                        'class' => $hit['metadata']['classIdentifier'],
+                        'name' => $hit['metadata']['name'][$language],
+                        'url' => '/content/view/full/' . $hit['metadata']['mainNodeId'],
+                        'popupContent' => '<em>Loading...</em>'
+                      );
 
-                $geoDataMap = $geoObject->dataMap();
-                if ($geoDataMap['geo']->hasContent()) {
-                  $geoData = $geoDataMap['geo']->content();
-                  $feature = new DataHandlerTnFamMapMarkersGeoJsonFeature($hit['metadata']['id'],
-                    array($geoData->longitude, $geoData->latitude), $properties);
-                  $featureData->add($feature);
+                      $geoDataMap = $geoObject->dataMap();
+                      if ($geoDataMap['geo']->hasContent()) {
+                        $geoData = $geoDataMap['geo']->content();
+                        /*$feature = new DataHandlerTnFamMapMarkersGeoJsonFeature($hit['metadata']['id'],
+                          array($geoData->longitude, $geoData->latitude), $properties);*/
+                        $feature = new DataHandlerTnFamMapMarkersGeoJsonFeature($geoObjectId,
+                          array($geoData->longitude, $geoData->latitude), $properties);
+                        $featureData->add($feature);
+                      }
+                    }
+                  }
                 }
               }
+
             } catch (Exception $e) {
               eZDebug::writeError($e->getMessage(), __METHOD__);
             }
@@ -133,10 +144,15 @@ class DataHandlerTnFamMapMarkersGeoJsonFeatureCollection
 {
   public $type = 'FeatureCollection';
   public $features = array();
+  public $featuresIndex = array();
 
   public function add(DataHandlerTnFamMapMarkersGeoJsonFeature $feature)
   {
-    $this->features[] = $feature;
+    if (!isset($this->featuresIndex[$feature->id]))
+    {
+      $this->featuresIndex[$feature->id] = $feature;
+      $this->features[] = $feature;
+    }
   }
 }
 

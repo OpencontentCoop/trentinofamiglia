@@ -13,8 +13,6 @@
   {def $show_left = false()}
 {/if}
 
-{def $extra_template = 'design:openpa/full/parts/section_left/public_organization.tpl'}
-
 <div class="openpa-full class-{$node.class_identifier}">
   <div class="title">
     {include uri='design:openpa/full/parts/node_languages.tpl'}
@@ -25,20 +23,21 @@
 
       {include uri=$openpa.content_main.template}
 
-      {include uri=$openpa.content_infocollection.template}
-
-      {include uri='design:openpa/full/parts/organizations/certifications.tpl'}
-
-      {include uri='design:openpa/full/parts/contacts_organizations.tpl'}
-
-      {include uri='design:openpa/full/parts/exploded_contact_points.tpl' attribute_name='punti_di_contatto_on_line' hide_title=$openpa.content_contacts.has_content hide_title=false())}
+      {include uri=$openpa.content_contacts.template}
 
       {include uri=$openpa.content_detail.template}
 
-      {node_view_gui content_node=$node view=children view_parameters=$view_parameters}
+      {include uri=$openpa.content_infocollection.template}
+
+      {if $node.data_map.layout.has_content}
+        {attribute_view_gui attribute=$node.data_map.layout}
+      {else}
+        {node_view_gui content_node=$node view=children view_parameters=$view_parameters}
+      {/if}
 
     </div>
 
+    {def $extra_template = 'design:openpa/full/parts/section_left/empty.tpl'}
     {include uri='design:openpa/full/parts/section_left.tpl' extra_template=$extra_template}
   </div>
   {if $openpa.content_date.show_date}
