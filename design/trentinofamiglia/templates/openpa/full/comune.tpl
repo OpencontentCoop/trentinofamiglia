@@ -29,13 +29,16 @@
 
       {include uri=$openpa.content_infocollection.template}
 
-      {include uri='design:parts/mappa_tn_fam_reverse.tpl'
+      {*include uri='design:parts/mappa_tn_fam.tpl'
                title="Organizzazioni aderenti"
-               query= concat("(raw[attr_lat_s] = '*' and raw[attr_lon_s] = '*') and classes [public_organization,private_organization] and comune.id in [", $node.contentobject_id, "]")
+               query= concat("raw[subattr_geo___coordinates____gpt] range ['-90,-90','90,90'] and classes [public_organization,private_organization] and comune.id in [", $node.contentobject_id, "]")
                facets=""
                class="comune"
                attribute="comune"
-      }
+      *}
+
+      <div id="map" style="height: 600px; width: 100%"></div>
+
       {node_view_gui content_node=$node view=children view_parameters=$view_parameters}
 
     </div>
@@ -47,5 +50,52 @@
   {/if}
 </div>
 
+{ezscript_require( array(
+    'ezjsc::jquery',
+    'jquery.opendataTools.js',
+    'moment-with-locales.min.js',    
+    'leaflet.js',
+    'leaflet.markercluster.js',
+    'leaflet.makimarkers.js'    
+))}
 
+{ezcss_require( array(
+    'plugins/leaflet/leaflet.css',
+    'plugins/leaflet/map.css',
+    'MarkerCluster.css',
+    'MarkerCluster.Default.css' 
+))}
+
+<script type="text/javascript" language="javascript">
+var query = "{concat("classes [public_organization,private_organization] and comune.id in [", $node.contentobject_id, "]")}";
+{literal}
+$(document).ready(function () {
+  var tools = $.opendataTools;
+  var initMap = function () {
+    var map = tools.initMap(
+        'map',
+        function (response) {
+            return L.geoJson(response, {
+                pointToLayer: function (feature, latlng) {
+                    var customIcon = L.MakiMarkers.icon({icon: "circle", size: "l"});
+                    return L.marker(latlng, {icon: customIcon});
+                },
+                onEachFeature: function (feature, layer) {
+                    var popupDefault = '<h3><a href="' + tools.settings('accessPath') + '/agenda/event/' + feature.properties.mainNodeId + '" target="_blank">';
+                    popupDefault += feature.properties.name;
+                    popupDefault += '</a></h3>';
+                    var popup = new L.Popup({maxHeight: 360});
+                    popup.setContent(popupDefault);                          
+                    layer.bindPopup(popup);
+                }
+            });
+        }
+    );
+    map.scrollWheelZoom.disable();
+    tools.loadMarkersInMap(query);
+  };
+  initMap();
+});
+{/literal}
+</script>
 
