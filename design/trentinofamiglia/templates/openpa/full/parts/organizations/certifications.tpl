@@ -16,39 +16,39 @@ $objects_count = $search_reverse_related.SearchCount}
         <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
           <img class="img-responsive" src="{'familyaudit.png'|ezimage(no)}" />
         </td>
-        <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4">
+        <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
           {if $o.data_map.n_iscriz_registro.has_content}
-            <p>{$o.data_map.n_iscriz_registro.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_iscriz_registro}</strong></p>
+            {$o.data_map.n_iscriz_registro.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_iscriz_registro}</strong><br />
           {/if}
           {if $o.data_map.stato_certificazione.has_content}
-            <p>{$o.data_map.stato_certificazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.stato_certificazione}</strong></p>
+            {$o.data_map.stato_certificazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.stato_certificazione}</strong><br />
           {/if}
           {if $o.data_map.sperimentazione.has_content}
-            <p>{$o.data_map.sperimentazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.sperimentazione}</strong></p>
+            {$o.data_map.sperimentazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.sperimentazione}</strong><br />
           {/if}
           {if $o.data_map.data_fa.has_content}
-            <p>{$o.data_map.data_fa.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_fa}</strong></p>
+            {$o.data_map.data_fa.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_fa}</strong><br />
           {/if}
           {if $o.data_map.determina_fa.has_content}
-            <p>{$o.data_map.determina_fa.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_fa}</strong></p>
+            {$o.data_map.determina_fa.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_fa}</strong><br />
           {/if}
           {if $o.data_map.data_executive.has_content}
-            <p>{$o.data_map.data_executive.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_executive}</strong></p>
+            {$o.data_map.data_executive.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_executive}</strong><br />
           {/if}
           {if $o.data_map.determina_executive.has_content}
-            <p>{$o.data_map.determina_executive.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_executive}</strong></p>
+            {$o.data_map.determina_executive.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_executive}</strong><br />
           {/if}
           {if $o.data_map.data_revoca.has_content}
-            <p>{$o.data_map.data_revoca.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_revoca}</strong></p>
+            {$o.data_map.data_revoca.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_revoca}</strong><br />
           {/if}
           {if $o.data_map.determina_revoca.has_content}
-            <p>{$o.data_map.determina_revoca.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_revoca}</strong></p>
+            {$o.data_map.determina_revoca.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_revoca}</strong><br />
           {/if}
           {if $o.data_map.data_scadenza.has_content}
-            <p>{$o.data_map.data_scadenza.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_scadenza}</strong></p>
+            {$o.data_map.data_scadenza.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_scadenza}</strong><br />
           {/if}
           {if $o.data_map.note.has_content}
-            <p>{$o.data_map.note.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.note}</strong></p>
+            {$o.data_map.note.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.note}</strong><br />
           {/if}
         </td>
       {/foreach}
@@ -74,21 +74,21 @@ $objects_count = $search_reverse_related.SearchCount}
         <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
           <img class="img-responsive" src="{'familyintrentino.jpg'|ezimage(no)}" />
         </td>
-        <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4">
+        <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
           {if $o.data_map.id_unico.has_content}
-            <p>{$o.data_map.id_unico.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.id_unico}</strong></p>
+            {$o.data_map.id_unico.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.id_unico}</strong><br />
           {/if}
           {if $o.data_map.tipologia.has_content}
-            <p>{$o.data_map.tipologia.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.tipologia}</strong></p>
+            {$o.data_map.tipologia.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.tipologia}</strong><br />
           {/if}
           {if $o.data_map.n_det_assegnazione.has_content}
-            <p>{$o.data_map.n_det_assegnazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_det_assegnazione}</strong></p>
+            {$o.data_map.n_det_assegnazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_det_assegnazione}</strong><br />
           {/if}
           {if $o.data_map.data_det_assegnazione.has_content}
-            <p>{$o.data_map.data_det_assegnazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_det_assegnazione}</strong></p>
+            {$o.data_map.data_det_assegnazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_det_assegnazione}</strong><br />
           {/if}
           {if $o.data_map.n_registrazione_familyintrentino.has_content}
-            <p>{$o.data_map.n_registrazione_familyintrentino.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_registrazione_familyintrentino}</strong></p>
+            {$o.data_map.n_registrazione_familyintrentino.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_registrazione_familyintrentino}</strong><br />
           {/if}
         </td>
       {/foreach}
@@ -119,18 +119,18 @@ $objects_count = $search_reverse_related.SearchCount}
             {attribute_view_gui attribute=$distretto.data_map.image}
           </td>
         {/if}
-        <td class="">
+        <td class="Prose">
           {if $o.data_map.distretto.has_content}
-            <p>{$o.data_map.distretto.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.distretto}</strong></p>
+            {$o.data_map.distretto.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.distretto}</strong><br />
           {/if}
           {if $o.data_map.data_inizio_adesione.has_content}
-            <p>{$o.data_map.data_inizio_adesione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_inizio_adesione}</strong></p>
+            {$o.data_map.data_inizio_adesione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_inizio_adesione}</strong><br />
           {/if}
           {if $o.data_map.coordinatore.has_content}
-            <p>{$o.data_map.coordinatore.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.coordinatore}</strong></p>
+            {$o.data_map.coordinatore.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.coordinatore}</strong><br />
           {/if}
           {if $o.data_map.proponente.has_content}
-            <p>{$o.data_map.proponente.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.proponente}</strong></p>
+            {$o.data_map.proponente.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.proponente}</strong><br />
           {/if}
 
         </td>

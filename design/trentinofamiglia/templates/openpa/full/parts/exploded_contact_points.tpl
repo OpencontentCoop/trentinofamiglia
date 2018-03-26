@@ -23,7 +23,7 @@
   <section class="Prose Alert Alert--info u-margin-bottom-l">
     <div class="Grid Grid--withGutter">
       {foreach $contact_points as $c}
-        <h3 class="u-text-h5"> {$node.name}</h3>
+        <h5 class="u-text-h5 u-sizeFull"> {$node.name}</h5>
         {if $c.data_map.pec.has_content}
           <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
             <strong>{$c.data_map.pec.contentclass_attribute.name}: </strong>
