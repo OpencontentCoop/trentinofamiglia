@@ -19,26 +19,28 @@
     <h2>{$node.name|wash()}</h2>
   </div>
   <div class="content-container">
-    <div class="content{if or( $show_left, $openpa.control_menu.show_extra_menu )} withExtra{/if}">
-
-      {include uri=$openpa.content_main.template}
-
-      {include uri=$openpa.content_contacts.template}
-
-      {include uri=$openpa.content_detail.template}
-
-      {include uri=$openpa.content_infocollection.template}
+    <div class="content{if and(or( $show_left, $openpa.control_menu.show_extra_menu ), $node.data_map.layout.has_content|not)} withExtra{/if}">
 
       {if $node.data_map.layout.has_content}
         {attribute_view_gui attribute=$node.data_map.layout}
       {else}
+        {include uri=$openpa.content_main.template}
+
+        {include uri=$openpa.content_contacts.template}
+
+        {include uri=$openpa.content_detail.template}
+
+        {include uri=$openpa.content_infocollection.template}
+
         {node_view_gui content_node=$node view=children view_parameters=$view_parameters}
       {/if}
 
     </div>
 
-    {def $extra_template = 'design:openpa/full/parts/section_left/empty.tpl'}
-    {include uri='design:openpa/full/parts/section_left.tpl' extra_template=$extra_template}
+    {if $node.data_map.layout.has_content|not}
+      {def $extra_template = 'design:openpa/full/parts/section_left/empty.tpl'}
+      {include uri='design:openpa/full/parts/section_left.tpl' extra_template=$extra_template}
+    {/if}
   </div>
   {if $openpa.content_date.show_date}
     {include uri=$openpa.content_date.template}

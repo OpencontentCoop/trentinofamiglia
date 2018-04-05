@@ -110,16 +110,14 @@ $objects_count = $search_reverse_related.SearchCount}
 {if $objects_count|gt(0)}
   <table class="Table Table--compact reverse-related" cellspacing="0">
     <tr>
+      <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
+        <img class="img-responsive" src="{'distrettofamiglia.png'|ezimage(no)}" />
+      </td>
+      <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
       {foreach $objects as $o}
-
         {def $distretto = fetch( 'content', 'object', hash( 'object_id', $o.data_map.distretto.content.relation_list[0].contentobject_id ) )}
 
-        {if $distretto|attribute(image).has_content}
-          <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
-            {attribute_view_gui attribute=$distretto.data_map.image}
-          </td>
-        {/if}
-        <td class="Prose">
+        <div class="u-padding-bottom-s">
           {if $o.data_map.distretto.has_content}
             {$o.data_map.distretto.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.distretto}</strong><br />
           {/if}
@@ -132,12 +130,89 @@ $objects_count = $search_reverse_related.SearchCount}
           {if $o.data_map.proponente.has_content}
             {$o.data_map.proponente.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.proponente}</strong><br />
           {/if}
-
-        </td>
-
+        </div>
       {/foreach}
+      </td>
 
     </tr>
   </table>
 {/if}
 {undef $search_reverse_related $objects $objects_count}
+
+
+{* Network Nazionale *}
+{def $search_reverse_related = fetch('ezfind','search', hash(
+'limit',100,
+'class_id', array('adesione_network_nazionale'),
+'filter', array(concat(solr_meta_subfield('organizzazione_aderente','id'),":",$node.object.id))
+))
+$objects = $search_reverse_related.SearchResult
+$objects_count = $search_reverse_related.SearchCount}
+
+{if $objects_count|gt(0)}
+  <table class="Table Table--compact reverse-related" cellspacing="0">
+    <tr>
+      <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
+        <img class="img-responsive" src="{'networknazionale.png'|ezimage(no)}" />
+      </td>
+      <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
+        {foreach $objects as $o}
+          {def $distretto = fetch( 'content', 'object', hash( 'object_id', $o.data_map.distretto.content.relation_list[0].contentobject_id ) )}
+
+          <div class="u-padding-bottom-s">
+            {if $o.data_map.distretto.has_content}
+              {$o.data_map.distretto.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.distretto}</strong><br />
+            {/if}
+            {if $o.data_map.data_inizio_adesione.has_content}
+              {$o.data_map.data_inizio_adesione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_inizio_adesione}</strong><br />
+            {/if}
+            {if $o.data_map.coordinatore.has_content}
+              {$o.data_map.coordinatore.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.coordinatore}</strong><br />
+            {/if}
+            {if $o.data_map.proponente.has_content}
+              {$o.data_map.proponente.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.proponente}</strong><br />
+            {/if}
+          </div>
+        {/foreach}
+      </td>
+
+    </tr>
+  </table>
+{/if}
+{undef $search_reverse_related $objects $objects_count}
+
+{* Family  Card *}
+{def $search_reverse_related = fetch('ezfind','search', hash(
+'limit',100,
+'class_id', array('adesione_family_card'),
+'filter', array(concat(solr_meta_subfield('id_unico','id'),":",$node.object.id))
+))
+$objects = $search_reverse_related.SearchResult
+$objects_count = $search_reverse_related.SearchCount}
+
+{if $objects_count|gt(0)}
+  <table class="Table Table--compact reverse-related" cellspacing="0">
+    <tr>
+      <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
+        <img class="img-responsive" src="{'familycard.png'|ezimage(no)}" />
+      </td>
+      <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
+        {foreach $objects as $o}
+          {def $distretto = fetch( 'content', 'object', hash( 'object_id', $o.data_map.distretto.content.relation_list[0].contentobject_id ) )}
+
+          <div class="u-padding-bottom-s">
+            {if $o.data_map.data_inizio_adesione.has_content}
+              {$o.data_map.data_inizio_adesione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_inizio_adesione}</strong><br />
+            {/if}
+            {if $o.data_map.tipo_family_card.has_content}
+              {$o.data_map.tipo_family_card.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.tipo_family_card}</strong><br />
+            {/if}
+          </div>
+        {/foreach}
+      </td>
+
+    </tr>
+  </table>
+{/if}
+{undef $search_reverse_related $objects $objects_count}
+

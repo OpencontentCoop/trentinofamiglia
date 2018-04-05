@@ -1,24 +1,24 @@
 {ezscript_require( array(
     'ezjsc::jquery',
     'jquery.opendataTools.js',
-    'moment-with-locales.min.js',    
+    'moment-with-locales.min.js',
     'leaflet.js',
     'leaflet.markercluster.js',
-    'leaflet.makimarkers.js'    
+    'leaflet.makimarkers.js'
 ))}
 
 {ezcss_require( array(
     'plugins/leaflet/leaflet.css',
     'plugins/leaflet/map.css',
     'MarkerCluster.css',
-    'MarkerCluster.Default.css' 
+    'MarkerCluster.Default.css'
 ))}
 
 <script type="text/javascript" language="javascript">
 {literal}
 $(document).ready(function () {
   var tools = $.opendataTools;
-  tools.settings('accessPath', "{/literal}{'/'|ezurl(no)}{literal}");
+  tools.settings('accessPath', "{/literal}{'/'|ezurl(no, full)}{literal}");
   var initMap = function () {
     var map = tools.initMap(
         "map", //"{/literal}{$map_id}{literal}", todo fix jquery.opendataTools.js#552
@@ -33,7 +33,7 @@ $(document).ready(function () {
                     popupDefault += feature.properties.name;
                     popupDefault += '</a></h3>';
                     var popup = new L.Popup({maxHeight: 360});
-                    popup.setContent(popupDefault);                          
+                    popup.setContent(popupDefault);
                     layer.bindPopup(popup);
                 }
             });
