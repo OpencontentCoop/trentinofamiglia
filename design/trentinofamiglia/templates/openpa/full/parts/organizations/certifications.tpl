@@ -98,6 +98,47 @@ $objects_count = $search_reverse_related.SearchCount}
 {/if}
 {undef $search_reverse_related $objects $objects_count}
 
+
+{* Certificazione family in Italia*}
+{def $search_reverse_related = fetch('ezfind','search', hash(
+'limit',100,
+'class_id', array('certificazione_familyinitalia'),
+'filter', array(concat(solr_meta_subfield('id_unico','id'),":",$node.object.id))
+))
+$objects = $search_reverse_related.SearchResult
+$objects_count = $search_reverse_related.SearchCount}
+
+{if $objects_count|gt(0)}
+  <table class="Table Table--compact reverse-related" cellspacing="0">
+    <tr>
+      {foreach $objects as $o}
+        <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
+          <img class="img-responsive" src="{'familyinitalia.png'|ezimage(no)}" />
+        </td>
+        <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
+          {if $o.data_map.id_unico.has_content}
+            {$o.data_map.id_unico.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.id_unico}</strong><br />
+          {/if}
+          {if $o.data_map.tipologia.has_content}
+            {$o.data_map.tipologia.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.tipologia}</strong><br />
+          {/if}
+          {if $o.data_map.n_det_assegnazione.has_content}
+            {$o.data_map.n_det_assegnazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_det_assegnazione}</strong><br />
+          {/if}
+          {if $o.data_map.data_det_assegnazione.has_content}
+            {$o.data_map.data_det_assegnazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_det_assegnazione}</strong><br />
+          {/if}
+          {if $o.data_map.n_registrazione_familyinitalia.has_content}
+            {$o.data_map.n_registrazione_familyinitalia.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_registrazione_familyinitalia}</strong><br />
+          {/if}
+        </td>
+      {/foreach}
+
+    </tr>
+  </table>
+{/if}
+{undef $search_reverse_related $objects $objects_count}
+
 {* Distretto famiglia*}
 {def $search_reverse_related = fetch('ezfind','search', hash(
 'limit',100,
