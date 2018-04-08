@@ -4,7 +4,7 @@
 ))}
 
 {def $contact_points = array()
-     $attribute = $node|attribute($attribute_name)}
+$attribute = $node|attribute($attribute_name)}
 
 {* Contatti *}
 {if $attribute.has_content}
@@ -20,10 +20,10 @@
   {if $hide_title|not()}
     <h3 class="u-text-h3"><i class="fa fa-comments-o fa-lg"></i> Contatti</h3>
   {/if}
-  <section class="Prose Alert Alert--info u-margin-bottom-l">
-    <div class="Grid Grid--withGutter">
-      {foreach $contact_points as $c}
-        <h3 class="u-text-h5"> {$node.name}</h3>
+  {foreach $contact_points as $c}
+    <section class="Prose Alert Alert--info u-margin-bottom-l">
+      <div class="Grid Grid--withGutter">
+        <h5 class="u-text-h5 u-sizeFull"> {$c.name}<a href="{$c.url_alias|ezurl(no)}"> <i class="fa fa-link"></i></a></h5>
         {if $c.data_map.pec.has_content}
           <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
             <strong>{$c.data_map.pec.contentclass_attribute.name}: </strong>
@@ -76,9 +76,10 @@
             {attribute_view_gui attribute=$c.data_map.sito_web}
           </div>
         {/if}
-      {/foreach}
-    </div>
-  </section>
+
+      </div>
+    </section>
+  {/foreach}
 {/if}
 
 {undef $contact_points $attribute}

@@ -28,7 +28,7 @@
           $.each(facetDefinition.data, function (value, count) {
             if (value.length > 0) {
               var quotedValue = encodeURIComponent('"' + value + '"');
-              var option = $('<option value="' + quotedValue + '" data-value="'+value+'">' + value + ' (' + count + ')</option>');
+              var option = $('<option value="' + quotedValue + '" data-value="'+value+'">' + value.replace(/_/g, ' ') + ' (' + count + ')</option>');
               if (currentFilters[facetDefinition.field]
                 && currentFilters[facetDefinition.field].value
                 && $.inArray(quotedValue, currentFilters[facetDefinition.field].value) > -1) {
