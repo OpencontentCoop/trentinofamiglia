@@ -47,13 +47,15 @@
       attribute="partner_pubblici"
       }*}
 
-      {include uri='design:parts/mappa_tn_fam.tpl'
-      title="Organizzazioni aderenti"
-      id="partner-pubblici"
-      query= concat("((raw[subattr_partner_pubblici___lat____s] = '*' and raw[subattr_partner_pubblici___lon____s] = '*') or (raw[subattr_partner_privati_aderenti___lat____s] = '*' and raw[subattr_partner_privati_aderenti___lon____s] = '*')) and classes [partnership]")
-      facets=""
-      attribute="partner_privati_aderenti,partner_pubblici"
-      }
+      {if or($node.data_map.partner_privati_aderenti.has_content, $node.data_map.partner_privati_aderenti.partner_pubblici.has_content}
+        {include uri='design:parts/mappa_tn_fam.tpl'
+        title="Organizzazioni aderenti"
+        id="partner-pubblici"
+        query= concat("((raw[subattr_partner_pubblici___lat____s] = '*' and raw[subattr_partner_pubblici___lon____s] = '*') or (raw[subattr_partner_privati_aderenti___lat____s] = '*' and raw[subattr_partner_privati_aderenti___lon____s] = '*')) and classes [partnership] and id in [", $node.contentobject_id, "]")
+        facets=""
+        attribute="partner_privati_aderenti,partner_pubblici"
+        }
+      {/if}
 
       {node_view_gui content_node=$node view=children view_parameters=$view_parameters}
 
