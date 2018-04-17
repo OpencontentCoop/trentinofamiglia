@@ -7,39 +7,73 @@ use Opencontent\Opendata\Api\Values\Content;
 
 class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
 {
+
   public $contentType = 'geojson';
 
-  private $contentRepository;
+  private $query = '';
+  private $attributes = '';
+  private $maps = array();
 
-  private $contentSearch;
-
-  private $currentEnvironment;
 
   public function __construct(array $Params)
   {
     $this->contentType = eZHTTPTool::instance()->getVariable('contentType', $this->contentType);
-    $this->contentRepository = new ContentRepository();
-    $this->contentSearch = new ContentSearch();
-
-    $this->currentEnvironment = new FullEnvironmentSettings();
-    $parser = new ezpRestHttpRequestParser();
-    $request = $parser->createRequest();
-    $this->currentEnvironment->__set('request', $request);
-
-    $this->contentRepository->setEnvironment($this->currentEnvironment);
-    $this->contentSearch->setEnvironment($this->currentEnvironment);
-
   }
 
-  private function findAll($query, $languageCode = null, array $limitation = null)
+
+  private function load( $hashIdentifier )
   {
+    $query      = $this->query;
+    $attributes = $this->attributes;
+    $args = compact(array("hashIdentifier", "query", "attributes"));
+
+    if (!isset($this->maps[$hashIdentifier])) {
+      $this->maps[$hashIdentifier] = MapsCacheManager::getCacheManager($hashIdentifier)->processCache(
+        array('MapsCacheManager', 'retrieveCache'),
+        array(__CLASS__, 'generateCache'),
+        null,
+        null,
+        $args
+      );
+    }
+    return $this->maps[$hashIdentifier];
+  }
+
+  public static function generateCache( $file, $args )
+  {
+
+    extract( $args );
+    $content = self::find( $query, $attributes);
+
+    return array(
+      'content' => $content,
+      'scope' => 'maps-cache',
+      'datatype' => 'php',
+      'store' => true
+    );
+  }
+
+  protected static function findAll($query, $languageCode = null, array $limitation = null)
+  {
+
+    $contentRepository = new ContentRepository();
+    $contentSearch = new ContentSearch();
+    $currentEnvironment = new FullEnvironmentSettings();
+    $parser = new ezpRestHttpRequestParser();
+    $request = $parser->createRequest();
+    $currentEnvironment->__set('request', $request);
+
+    $contentRepository->setEnvironment($currentEnvironment);
+    $contentSearch->setEnvironment($currentEnvironment);
+
+
     $hits = array();
     $count = 0;
     $facets = array();
-    $query .= ' and limit ' . $this->currentEnvironment->getMaxSearchLimit();
+    $query .= ' and limit ' . $currentEnvironment->getMaxSearchLimit();
     eZDebug::writeNotice($query, __METHOD__);
     while ($query) {
-      $results = $this->contentSearch->search($query, $limitation);
+      $results = $contentSearch->search($query, $limitation);
       $count = $results->totalCount;
       $hits = array_merge($hits, $results->searchHits);
       $facets = $results->facets;
@@ -54,69 +88,73 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
     return $result;
   }
 
-  public function getData()
+  protected static function find( $query, $attributes)
   {
-    if ($this->contentType == 'geojson') {
-      $featureData = new DataHandlerTnFamMapMarkersGeoJsonFeatureCollection();
+    $featureData = new DataHandlerTnFamMapMarkersGeoJsonFeatureCollection();
+    $language    = eZLocale::currentLocaleCode();
+    try {
+      $data = self::findAll($query, $language);
+      $result['facets'] = $data->facets;
 
-      if (eZHTTPTool::instance()->hasGetVariable('query') && eZHTTPTool::instance()->hasGetVariable('attribute')) {
-        $result = false;
-        $query = eZHTTPTool::instance()->getVariable('query');
-        $attributes = explode(',', eZHTTPTool::instance()->getVariable('attribute'));
-        $language = eZLocale::currentLocaleCode();
-
+      foreach ($data->searchHits as $hit) {
         try {
-          $data = $this->findAll($query, $language);
-          $result['facets'] = $data->facets;
-
-          foreach ($data->searchHits as $hit) {
-            try {
-              foreach ($attributes as $attribute)
+          foreach ($attributes as $attribute)
+          {
+            if (isset($hit['data'][$language][$attribute]))
+            {
+              foreach ($hit['data'][$language][$attribute]['content'] as $gObject)
               {
-                if (isset($hit['data'][$language][$attribute]))
-                {
-                  foreach ($hit['data'][$language][$attribute]['content'] as $gObject)
-                  {
-                    $geoObjectId = $gObject['id'];
-                    $geoObject = eZContentObject::fetch($geoObjectId);
+                $geoObjectId = $gObject['id'];
+                $geoObject = eZContentObject::fetch($geoObjectId);
 
-                    if ($geoObject instanceof eZContentObject) {
-                      $properties = array(
-                        /*'id' => $hit['metadata']['id'],*/
-                        'id' => $geoObjectId,
-                        'type' => $hit['metadata']['classIdentifier'],
-                        'class' => $hit['metadata']['classIdentifier'],
-                        'name' => $hit['metadata']['name'][$language],
-                        'url' => '/content/view/full/' . $hit['metadata']['mainNodeId'],
-                        'popupContent' => '<em>Loading...</em>'
-                      );
+                if ($geoObject instanceof eZContentObject) {
+                  $properties = array(
+                    /*'id' => $hit['metadata']['id'],*/
+                    'id' => $geoObjectId,
+                    'type' => $hit['metadata']['classIdentifier'],
+                    'class' => $hit['metadata']['classIdentifier'],
+                    'name' => $hit['metadata']['name'][$language],
+                    'url' => '/content/view/full/' . $hit['metadata']['mainNodeId'],
+                    'popupContent' => '<em>Loading...</em>'
+                  );
 
-                      $geoDataMap = $geoObject->dataMap();
-                      if ($geoDataMap['geo']->hasContent()) {
-                        $geoData = $geoDataMap['geo']->content();
-                        /*$feature = new DataHandlerTnFamMapMarkersGeoJsonFeature($hit['metadata']['id'],
-                          array($geoData->longitude, $geoData->latitude), $properties);*/
-                        $feature = new DataHandlerTnFamMapMarkersGeoJsonFeature($geoObjectId,
-                          array($geoData->longitude, $geoData->latitude), $properties);
-                        $featureData->add($feature);
-                      }
-                    }
+                  $geoDataMap = $geoObject->dataMap();
+                  if ($geoDataMap['geo']->hasContent()) {
+                    $geoData = $geoDataMap['geo']->content();
+                    /*$feature = new DataHandlerTnFamMapMarkersGeoJsonFeature($hit['metadata']['id'],
+                      array($geoData->longitude, $geoData->latitude), $properties);*/
+                    $feature = new DataHandlerTnFamMapMarkersGeoJsonFeature($geoObjectId,
+                      array($geoData->longitude, $geoData->latitude), $properties);
+                    $featureData->add($feature);
                   }
                 }
               }
-
-            } catch (Exception $e) {
-              eZDebug::writeError($e->getMessage(), __METHOD__);
             }
           }
 
-          $result['content'] = $featureData;
-
-          return $result;
-
         } catch (Exception $e) {
-          eZDebug::writeError($e->getMessage() . " in query $query", __METHOD__);
+          eZDebug::writeError($e->getMessage(), __METHOD__);
         }
+      }
+      return serialize( $featureData );
+
+    } catch (Exception $e) {
+      eZDebug::writeError($e->getMessage() . " in query $query", __METHOD__);
+    }
+  }
+
+
+  public function getData()
+  {
+    if ($this->contentType == 'geojson') {
+
+      if (eZHTTPTool::instance()->hasGetVariable('query') && eZHTTPTool::instance()->hasGetVariable('attribute')) {
+        $this->query = eZHTTPTool::instance()->getVariable('query');
+        $this->attributes = explode(',', eZHTTPTool::instance()->getVariable('attribute'));
+
+        $result['content'] = json_decode( $this->load( md5(trim($this->query . '-' . implode('-', $this->attributes))) ), true ) ;
+        return $result;
+
       }
     } elseif ($this->contentType == 'marker') {
       $view = eZHTTPTool::instance()->getVariable('view', 'panel');

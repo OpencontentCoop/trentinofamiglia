@@ -24,21 +24,22 @@ $attribute = $node|attribute($attribute_name)}
     <section class="Prose Alert Alert--info u-margin-bottom-l">
       <div class="Grid Grid--withGutter">
         <h5 class="u-text-h5 u-sizeFull"> {$c.name}<a href="{$c.url_alias|ezurl(no)}"> <i class="fa fa-link"></i></a></h5>
+
+        {if $c.data_map.e_mail.has_content}
+          <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
+            <strong>{$c.data_map.e_mail.contentclass_attribute.name}: </strong>
+          </div>
+          <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
+            {attribute_view_gui attribute=$c.data_map.e_mail}
+          </div>
+        {/if}
+
         {if $c.data_map.pec.has_content}
           <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
             <strong>{$c.data_map.pec.contentclass_attribute.name}: </strong>
           </div>
           <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
             {attribute_view_gui attribute=$c.data_map.pec}
-          </div>
-        {/if}
-
-        {if $c.data_map.fax.has_content}
-          <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
-            <strong>{$c.data_map.fax.contentclass_attribute.name}: </strong>
-          </div>
-          <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
-            {attribute_view_gui attribute=$c.data_map.fax}
           </div>
         {/if}
 
@@ -68,12 +69,22 @@ $attribute = $node|attribute($attribute_name)}
             {attribute_view_gui attribute=$c.data_map.cellulare}
           </div>
         {/if}
+
         {if $c.data_map.sito_web.has_content}
           <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
             <strong>{$c.data_map.sito_web.contentclass_attribute.name}: </strong>
           </div>
           <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
             {attribute_view_gui attribute=$c.data_map.sito_web}
+          </div>
+        {/if}
+
+        {if $c.data_map.fax.has_content}
+          <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
+            <strong>{$c.data_map.fax.contentclass_attribute.name}: </strong>
+          </div>
+          <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
+            {attribute_view_gui attribute=$c.data_map.fax}
           </div>
         {/if}
 
