@@ -136,7 +136,8 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
           eZDebug::writeError($e->getMessage(), __METHOD__);
         }
       }
-      return serialize( $featureData );
+      $result['content'] =  $featureData;
+      return json_encode($result);
 
     } catch (Exception $e) {
       eZDebug::writeError($e->getMessage() . " in query $query", __METHOD__);
@@ -152,8 +153,7 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
         $this->query = eZHTTPTool::instance()->getVariable('query');
         $this->attributes = explode(',', eZHTTPTool::instance()->getVariable('attribute'));
 
-        $result['content'] = json_decode( $this->load( md5(trim($this->query . '-' . implode('-', $this->attributes))) ), true ) ;
-        return $result;
+        return  json_decode( $this->load( md5(trim($this->query . '-' . implode('-', $this->attributes))) ), true ) ;
 
       }
     } elseif ($this->contentType == 'marker') {

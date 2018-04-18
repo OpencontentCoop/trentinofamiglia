@@ -133,7 +133,8 @@ class DataHandlerTnFamReverseMapMarkers implements OpenPADataHandlerInterface
               eZDebug::writeError($e->getMessage(), __METHOD__);
             }
           }
-          return json_encode( $featureData );
+          $result['content'] =  $featureData;
+          return json_encode($result);
         }
 
       } catch (Exception $e) {
@@ -153,8 +154,7 @@ class DataHandlerTnFamReverseMapMarkers implements OpenPADataHandlerInterface
         $this->query = eZHTTPTool::instance()->getVariable('query');
         $this->attribute = eZHTTPTool::instance()->getVariable('attribute');
 
-        $result['content'] = json_decode( $this->load( md5(trim($this->query . '-' . $this->attribute)) ), true ) ;
-        return $result;
+        return json_decode( $this->load( md5(trim($this->query . '-' . $this->attribute)) ), true ) ;
 
       }
     } elseif ($this->contentType == 'marker') {
