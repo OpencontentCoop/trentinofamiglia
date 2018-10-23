@@ -79,14 +79,14 @@ $attribute = $node|attribute($attribute_name)}
           </div>
         {/if}
 
-        {if $c.data_map.fax.has_content}
+        {*if $c.data_map.fax.has_content}
           <div class="Grid-cell u-sm-size4of12 u-md-size4of12 u-lg-size4of12">
             <strong>{$c.data_map.fax.contentclass_attribute.name}: </strong>
           </div>
           <div class="Grid-cell u-sm-size8of12 u-md-size8of12 u-lg-size8of12">
             {attribute_view_gui attribute=$c.data_map.fax}
           </div>
-        {/if}
+        {/if*}
 
       </div>
     </section>

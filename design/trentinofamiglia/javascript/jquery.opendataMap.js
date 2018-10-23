@@ -119,6 +119,7 @@
             pointToLayer: function (feature, latlng) {
               var customIcon = L.MakiMarkers.icon({icon: "star", color: "#f00", size: "l"});
               var marker = L.marker(latlng, {icon: customIcon});
+
               markerMap[feature.id] = marker;
               return marker;
             }

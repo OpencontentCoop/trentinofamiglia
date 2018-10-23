@@ -125,3 +125,15 @@
 .openpa-panel .readmore {
   display: none !important;;
 }
+
+.content-main-abstract a,
+.content-main-body a,
+.Prose a{
+  text-decoration: underline !important;
+  font-weight: 800 !important;
+  color: #2222F0 !important;
+}
+
+.openpa-full .title h2 {
+  font-size: 3.2rem !important;
+}

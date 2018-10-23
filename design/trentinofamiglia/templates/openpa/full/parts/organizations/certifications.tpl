@@ -12,48 +12,50 @@ $objects_count = $search_reverse_related.SearchCount}
 
   <table class="Table Table--compact reverse-related" cellspacing="0">
     <tr>
-      {foreach $objects as $o}
-        <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
-          <img class="img-responsive" src="{'familyaudit.png'|ezimage(no)}" />
+      <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
+        <img class="img-responsive" src="{'familyaudit.png'|ezimage(no)}" />
+      </td>
+      <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
+        {foreach $objects as $o}
+          <div>
+            {if $o.data_map.n_iscriz_registro.has_content}
+              {$o.data_map.n_iscriz_registro.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_iscriz_registro}</strong><br />
+            {/if}
+            {if $o.data_map.stato_certificazione.has_content}
+              {$o.data_map.stato_certificazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.stato_certificazione}</strong><br />
+            {/if}
+            {if $o.data_map.sperimentazione.has_content}
+              {$o.data_map.sperimentazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.sperimentazione}</strong><br />
+            {/if}
+            {if $o.data_map.data_fa.has_content}
+              {$o.data_map.data_fa.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_fa}</strong><br />
+            {/if}
+            {if $o.data_map.determina_fa.has_content}
+              {$o.data_map.determina_fa.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_fa}</strong><br />
+            {/if}
+            {if $o.data_map.data_executive.has_content}
+              {$o.data_map.data_executive.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_executive}</strong><br />
+            {/if}
+            {if $o.data_map.determina_executive.has_content}
+              {$o.data_map.determina_executive.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_executive}</strong><br />
+            {/if}
+            {if $o.data_map.data_revoca.has_content}
+              {$o.data_map.data_revoca.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_revoca}</strong><br />
+            {/if}
+            {if $o.data_map.determina_revoca.has_content}
+              {$o.data_map.determina_revoca.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_revoca}</strong><br />
+            {/if}
+            {if $o.data_map.data_scadenza.has_content}
+              {$o.data_map.data_scadenza.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_scadenza}</strong><br />
+            {/if}
+            {if $o.data_map.note.has_content}
+              {$o.data_map.note.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.note}</strong><br />
+            {/if}
+          </div>
+          {delimiter}<hr />{/delimiter}
+        {/foreach}
         </td>
-        <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
-          {if $o.data_map.n_iscriz_registro.has_content}
-            {$o.data_map.n_iscriz_registro.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_iscriz_registro}</strong><br />
-          {/if}
-          {if $o.data_map.stato_certificazione.has_content}
-            {$o.data_map.stato_certificazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.stato_certificazione}</strong><br />
-          {/if}
-          {if $o.data_map.sperimentazione.has_content}
-            {$o.data_map.sperimentazione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.sperimentazione}</strong><br />
-          {/if}
-          {if $o.data_map.data_fa.has_content}
-            {$o.data_map.data_fa.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_fa}</strong><br />
-          {/if}
-          {if $o.data_map.determina_fa.has_content}
-            {$o.data_map.determina_fa.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_fa}</strong><br />
-          {/if}
-          {if $o.data_map.data_executive.has_content}
-            {$o.data_map.data_executive.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_executive}</strong><br />
-          {/if}
-          {if $o.data_map.determina_executive.has_content}
-            {$o.data_map.determina_executive.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_executive}</strong><br />
-          {/if}
-          {if $o.data_map.data_revoca.has_content}
-            {$o.data_map.data_revoca.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_revoca}</strong><br />
-          {/if}
-          {if $o.data_map.determina_revoca.has_content}
-            {$o.data_map.determina_revoca.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.determina_revoca}</strong><br />
-          {/if}
-          {if $o.data_map.data_scadenza.has_content}
-            {$o.data_map.data_scadenza.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_scadenza}</strong><br />
-          {/if}
-          {if $o.data_map.note.has_content}
-            {$o.data_map.note.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.note}</strong><br />
-          {/if}
-        </td>
-      {/foreach}
-
-    </tr>
+      </tr>
   </table>
 {/if}
 {undef $search_reverse_related $objects $objects_count}
@@ -70,11 +72,12 @@ $objects_count = $search_reverse_related.SearchCount}
 {if $objects_count|gt(0)}
   <table class="Table Table--compact reverse-related" cellspacing="0">
     <tr>
+      <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
+        <img class="img-responsive" src="{'familyintrentino.jpg'|ezimage(no)}" />
+      </td>
+      <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
       {foreach $objects as $o}
-        <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
-          <img class="img-responsive" src="{'familyintrentino.jpg'|ezimage(no)}" />
-        </td>
-        <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
+        <div>
           {if $o.data_map.id_unico.has_content}
             {$o.data_map.id_unico.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.id_unico}</strong><br />
           {/if}
@@ -90,9 +93,10 @@ $objects_count = $search_reverse_related.SearchCount}
           {if $o.data_map.n_registrazione_familyintrentino.has_content}
             {$o.data_map.n_registrazione_familyintrentino.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_registrazione_familyintrentino}</strong><br />
           {/if}
-        </td>
+        </div>
+        {delimiter}<hr />{/delimiter}
       {/foreach}
-
+      </td>
     </tr>
   </table>
 {/if}
@@ -111,11 +115,12 @@ $objects_count = $search_reverse_related.SearchCount}
 {if $objects_count|gt(0)}
   <table class="Table Table--compact reverse-related" cellspacing="0">
     <tr>
+      <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
+        <img class="img-responsive" src="{'familyinitalia.png'|ezimage(no)}" />
+      </td>
+      <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
       {foreach $objects as $o}
-        <td class="u-sm-size1of4 u-md-size1of4 u-lg-size1of4">
-          <img class="img-responsive" src="{'familyinitalia.png'|ezimage(no)}" />
-        </td>
-        <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
+        <div>
           {if $o.data_map.id_unico.has_content}
             {$o.data_map.id_unico.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.id_unico}</strong><br />
           {/if}
@@ -131,9 +136,10 @@ $objects_count = $search_reverse_related.SearchCount}
           {if $o.data_map.n_registrazione_familyinitalia.has_content}
             {$o.data_map.n_registrazione_familyinitalia.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_registrazione_familyinitalia}</strong><br />
           {/if}
-        </td>
+        </div>
+        {delimiter}<hr />{/delimiter}
       {/foreach}
-
+      </td>
     </tr>
   </table>
 {/if}
@@ -158,7 +164,7 @@ $objects_count = $search_reverse_related.SearchCount}
       {foreach $objects as $o}
         {def $distretto = fetch( 'content', 'object', hash( 'object_id', $o.data_map.distretto.content.relation_list[0].contentobject_id ) )}
 
-        <div class="u-padding-bottom-s">
+        <div>
           {if $o.data_map.distretto.has_content}
             {$o.data_map.distretto.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.distretto}</strong><br />
           {/if}
@@ -172,6 +178,7 @@ $objects_count = $search_reverse_related.SearchCount}
             {$o.data_map.proponente.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.proponente}</strong><br />
           {/if}
         </div>
+        {delimiter}<hr />{/delimiter}
       {/foreach}
       </td>
 
@@ -200,7 +207,7 @@ $objects_count = $search_reverse_related.SearchCount}
         {foreach $objects as $o}
           {def $distretto = fetch( 'content', 'object', hash( 'object_id', $o.data_map.distretto.content.relation_list[0].contentobject_id ) )}
 
-          <div class="u-padding-bottom-s">
+          <div>
             {if $o.data_map.distretto.has_content}
               {$o.data_map.distretto.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.distretto}</strong><br />
             {/if}
@@ -214,6 +221,7 @@ $objects_count = $search_reverse_related.SearchCount}
               {$o.data_map.proponente.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.proponente}</strong><br />
             {/if}
           </div>
+          {delimiter}<hr />{/delimiter}
         {/foreach}
       </td>
 
@@ -240,8 +248,7 @@ $objects_count = $search_reverse_related.SearchCount}
       <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
         {foreach $objects as $o}
           {def $distretto = fetch( 'content', 'object', hash( 'object_id', $o.data_map.distretto.content.relation_list[0].contentobject_id ) )}
-
-          <div class="u-padding-bottom-s">
+          <div>
             {if $o.data_map.data_inizio_adesione.has_content}
               {$o.data_map.data_inizio_adesione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_inizio_adesione}</strong><br />
             {/if}
@@ -249,6 +256,7 @@ $objects_count = $search_reverse_related.SearchCount}
               {$o.data_map.tipo_family_card.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.tipo_family_card}</strong><br />
             {/if}
           </div>
+          {delimiter}<hr />{/delimiter}
         {/foreach}
       </td>
 

@@ -31,7 +31,7 @@
 
       {include uri='design:openpa/full/parts/contacts_organizations.tpl'}
 
-      {include uri='design:openpa/full/parts/exploded_contact_points.tpl' attribute_name='punti_di_contatto_on_line' hide_title=$openpa.content_contacts.has_content hide_title=false())}
+      {include uri='design:openpa/full/parts/exploded_contact_points.tpl' attribute_name='punti_di_contatto_on_line' hide_title=$openpa.content_contacts.has_content hide_title=false()}
 
       {include uri=$openpa.content_detail.template}
 
