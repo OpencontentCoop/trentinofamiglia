@@ -3,221 +3,157 @@
 use Opencontent\Opendata\Api\ContentRepository;
 use Opencontent\Opendata\Api\ContentSearch;
 use Opencontent\Opendata\Api\Values\Content;
+use Opencontent\Opendata\GeoJson\FeatureCollection;
+use Opencontent\Opendata\GeoJson\Feature;
 
 
-class DataHandlerTnFamReverseMapMarkers implements OpenPADataHandlerInterface
+class DataHandlerTnFamReverseMapMarkers extends DataHandlerTnFamMapMarkers
 {
 
-  public $contentType = 'geojson';
+    public $contentType = 'geojson';
 
-  private $query = '';
-  private $attribute = '';
-  private $classIdentifier = '';
-  private $maps = array();
+    private $classIdentifier;
 
-  public function __construct(array $Params)
-  {
-      $this->contentType = eZHTTPTool::instance()->getVariable('contentType', $this->contentType);
-  }
+    private $query;
 
-  private function load( $hashIdentifier )
-  {
-    $query           = $this->query;
-    $attribute       = $this->attribute;
-    $classIdentifier = $this->classIdentifier;
-    $args = compact(array("hashIdentifier", "query", "attribute", "classIdentifier"));
+    private $attribute;
 
-    if (!isset($this->maps[$hashIdentifier])) {
-      $this->maps[$hashIdentifier] = MapsCacheManager::getCacheManager($hashIdentifier)->processCache(
-        array('MapsCacheManager', 'retrieveCache'),
-        array(__CLASS__, 'generateCache'),
-        null,
-        null,
-        $args
-      );
-    }
-    return $this->maps[$hashIdentifier];
-  }
+    private $block;
 
-  public static function generateCache( $file, $args )
-  {
+    private $queryList = array();
 
-    extract( $args );
-    $content = self::find( $query, $attribute, $classIdentifier );
-
-    return array(
-      'content' => $content,
-      'scope' => 'maps-cache',
-      'datatype' => 'php',
-      'store' => true
-    );
-  }
-
-  protected static function findAll($query, $languageCode = null, array $limitation = null)
-  {
-
-    $contentRepository = new ContentRepository();
-    $contentSearch = new ContentSearch();
-    $currentEnvironment = new FullEnvironmentSettings();
-    $parser = new ezpRestHttpRequestParser();
-    $request = $parser->createRequest();
-    $currentEnvironment->__set('request', $request);
-
-    $contentRepository->setEnvironment($currentEnvironment);
-    $contentSearch->setEnvironment($currentEnvironment);
-
-
-    $hits = array();
-    $count = 0;
-    $facets = array();
-    $query .= ' and limit ' . $currentEnvironment->getMaxSearchLimit();
-    eZDebug::writeNotice($query, __METHOD__);
-    while ($query) {
-      $results = $contentSearch->search($query, $limitation);
-      $count = $results->totalCount;
-      $hits = array_merge($hits, $results->searchHits);
-      $facets = $results->facets;
-      $query = $results->nextPageQuery;
-    }
-
-    $result = new \Opencontent\Opendata\Api\Values\SearchResults();
-    $result->searchHits = $hits;
-    $result->totalCount = $count;
-    $result->facets = $facets;
-
-    return $result;
-  }
-
-  protected static function find( $query, $attribute, $classIdentifier)
-  {
-    $featureData = new DataHandlerTnFamMapMarkersGeoJsonFeatureCollection();
-    $language    = eZLocale::currentLocaleCode();
-
-    $classQuery = "classes [$classIdentifier]";
-
-    $data = self::findAll($classQuery, $language);
-    $objIds = array();
-
-    if ($data->totalCount > 0) {
-      foreach ($data->searchHits as $hit) {
-        $objIds [] = $hit['data'][$language][$attribute]['content'][0]['id'];
-      }
-    }
-    array_unique($objIds);
-
-    if (eZHTTPTool::instance()->hasGetVariable('query')) {
-      $query .= ' and raw[meta_id_si] in  ['. implode(',', $objIds) .']';
-      try {
-        $data = self::findAll($query, $language);
-
-        if ($data->totalCount > 0) {
-          $result['facets'] = $data->facets;
-
-          foreach ($data->searchHits as $hit) {
-            try {
-              $properties = array(
-                'id' => $hit['metadata']['id'],
-                'type' => $hit['metadata']['classIdentifier'],
-                'class' => $hit['metadata']['classIdentifier'],
-                'name' => $hit['metadata']['name'][$language],
-                'url' => '/content/view/full/' . $hit['metadata']['mainNodeId'],
-                'popupContent' => '<em>Loading...</em>'
-              );
-
-              if (!empty($hit['data'][$language]['geo']['content']['longitude']) && !empty($hit['data'][$language]['geo']['content']['latitude'])) {
-                $feature = new DataHandlerTnFamReverseMapMarkersGeoJsonFeature($hit['metadata']['id'], array($hit['data'][$language]['geo']['content']['longitude'], $hit['data'][$language]['geo']['content']['latitude']), $properties);
-                $featureData->add($feature);
-              }
-
-            } catch (Exception $e) {
-              eZDebug::writeError($e->getMessage(), __METHOD__);
-            }
-          }
-          $result['content'] =  $featureData;
-          return json_encode($result);
+    public function __construct(array $Params)
+    {
+        if (eZHTTPTool::instance()->hasGetVariable('contentType')){
+            $this->contentType = eZHTTPTool::instance()->getVariable('contentType');
         }
+        
+        if ($this->contentType == 'geojson'){
+            if (isset($Params['Parameters'][1])) {
+                $blockId = $Params['Parameters'][1];
+                $this->block = eZPageBlock::fetch($blockId);
+            }
 
-      } catch (Exception $e) {
-        eZDebug::writeError($e->getMessage() . " in query $query", __METHOD__);
-      }
+            if ($this->block instanceof eZPageBlock && $this->block->attribute('type') == "MappaTnFamReverse") {
+                $attributes = $this->block->attribute('custom_attributes');
+
+                $this->query = $attributes['query'];
+                if (eZHTTPTool::instance()->hasGetVariable('q')){
+                    $this->query .= ' and ' . urldecode(eZHTTPTool::instance()->getVariable('q'));
+                }
+                $this->classIdentifier = $attributes['class'];
+                $this->attribute = $attributes['attribute'];
+            } else {
+                if (eZHTTPTool::instance()->hasGetVariable('query')){
+                    $this->query = eZHTTPTool::instance()->getVariable('query');
+                }
+
+                if (eZHTTPTool::instance()->hasGetVariable('attribute')){
+                    $this->attribute = eZHTTPTool::instance()->getVariable('attribute');                    
+                }
+
+                if (eZHTTPTool::instance()->hasGetVariable('classIdentifier')){
+                    $this->classIdentifier = eZHTTPTool::instance()->getVariable('classIdentifier');                    
+                }
+            }
+        }
     }
-  }
 
-  public function getData()
-  {
-    if ($this->contentType == 'geojson') {
-      $featureData = new DataHandlerTnFamReverseMapMarkersGeoJsonFeatureCollection();
+    public function find()
+    {
+        $contentRepository = new ContentRepository();
+        $contentSearch = new ContentSearch();
+        $currentEnvironment = new TNFamGeoEnvironmentSettings(); //@todo override per bug di GeoEnvironmentSettings
+        $parser = new ezpRestHttpRequestParser();
+        $request = $parser->createRequest();
+        $currentEnvironment->__set('request', $request);
+        $contentRepository->setEnvironment($currentEnvironment);
+        $contentSearch->setEnvironment($currentEnvironment);
 
-      if (eZHTTPTool::instance()->hasGetVariable('classIdentifier') && eZHTTPTool::instance()->hasGetVariable('attribute')) {
+        try {
+            $collection = new FeatureCollection();  
+            $language = eZLocale::currentLocaleCode();
 
-        $this->classIdentifier = eZHTTPTool::instance()->getVariable('classIdentifier');
-        $this->query = eZHTTPTool::instance()->getVariable('query');
-        $this->attribute = eZHTTPTool::instance()->getVariable('attribute');
+            $classQuery = "classes [{$this->classIdentifier}]";
 
-        return json_decode( $this->load( md5(trim($this->query . '-' . $this->attribute)) ), true ) ;
+            $data = $this->findAll($classQuery);
+            $searchIdList = array();
 
-      }
-    } elseif ($this->contentType == 'marker') {
-      $view = eZHTTPTool::instance()->getVariable('view', 'panel');
-      $id = eZHTTPTool::instance()->getVariable('id', 0);
-      $object = eZContentObject::fetch($id);
-      if ($object instanceof eZContentObject && $object->attribute('can_read')) {
-        $tpl = eZTemplate::factory();
-        $tpl->setVariable('object', $object);
-        $tpl->setVariable('node', $object->attribute('main_node'));
-        $result = $tpl->fetch('design:node/view/' . $view . '.tpl');
-        $data = array('content' => $result);
-      } else {
-        $data = array('content' => '<em>Private</em>');
-      }
-      return $data;
+            if ($data->totalCount > 0) {
+                foreach ($data->searchHits as $hit) {
+                    if (isset($hit['data'][$language][$this->attribute]['content'][0]['id'])){
+                        $searchIdList [] = $hit['data'][$language][$this->attribute]['content'][0]['id'];
+                    }
+                }
+            }
+            array_unique($searchIdList);
+
+            $count = 0;
+            $features = array();
+            $facets = array();
+            $query = $this->query . ' and id = [' . implode(',', array_unique($searchIdList)) . ']';
+            while ($query) {
+                $this->queryList[] = $query;
+                $results = $contentSearch->search($query);
+                $facets = $results->facets;
+                $count = $results->totalCount;
+                $features = array_merge($features, $results->features);                
+                $query = $results->nextPageQuery;
+            }
+            
+            $collection->facets = $facets;
+            $collection->query = $this->queryList;
+            $collection->features = $features;
+            $collection->totalCount = $count;
+
+            return $collection;
+
+        } catch (Exception $e) {            
+            return array('error' => $e->getMessage());
+        }
     }
-  }
-}
 
+    public function getData()
+    {
+        if ($this->contentType == 'marker'){
 
+            $view = eZHTTPTool::instance()->variable('view', 'panel');
+            $id = eZHTTPTool::instance()->variable('id', 0);
+            $object = eZContentObject::fetch($id);
+            if ($object instanceof eZContentObject && $object->attribute('can_read')) {
+                $tpl = eZTemplate::factory();
+                $tpl->setVariable('object', $object);
+                $tpl->setVariable('node', $object->attribute('main_node'));
+                $result = $tpl->fetch('design:node/view/' . $view . '.tpl');
+                $data = array('content' => $result);
+            } else {
+                $data = array('content' => '<em>Private</em>');
+            }
 
-class DataHandlerTnFamReverseMapMarkersGeoJsonFeatureCollection
-{
-  public $type = 'FeatureCollection';
-  public $features = array();
+            return $data;
 
-  public function add(DataHandlerTnFamReverseMapMarkersGeoJsonFeature $feature)
-  {
-    $this->features[] = $feature;
-  }
-}
+        }elseif ($this->query && $this->attribute && $this->classIdentifier) {
+            
+            $blockId = $this->block ? $this->block->attribute('id') : '';       
+            $hashIdentifier = md5(trim($blockId . '-' . $this->query . '-' . $this->attribute . '-' . $this->classIdentifier));
 
-class DataHandlerTnFamReverseMapMarkersGeoJsonFeature
-{
-  public $type = "Feature";
-  public $id;
-  public $properties;
-  public $geometry;
+            return MapsCacheManager::getCacheManager($hashIdentifier)->processCache(
+                array('MapsCacheManager', 'retrieveCache'),
+                function() use($blockId){
+                    $handler = new DataHandlerTnFamReverseMapMarkers(array('Parameters' => array(1 => $blockId)));
+                    $content = $handler->find();
 
-  public function __construct($id, array $geometryArray, array $properties)
-  {
-    $this->id = $id;
+                    return array(
+                      'content' => json_decode(json_encode($content), true),
+                      'scope' => 'maps-cache',
+                      'datatype' => 'php',
+                      'store' => true
+                    );
+                }                
+            );            
+        } 
 
-    $this->geometry = new DataHandlerTnFamReverseMapMarkersGeoJsonGeometry();
-    $this->geometry->coordinates = $geometryArray;
-
-    $this->properties = new DataHandlerTnFamReverseMapMarkersGeoJsonProperties($properties);
-  }
-}
-
-class DataHandlerTnFamReverseMapMarkersGeoJsonGeometry
-{
-  public $type = "Point";
-  public $coordinates;
-}
-
-class DataHandlerTnFamReverseMapMarkersGeoJsonProperties
-{
-  public function __construct(array $properties = array())
-  {
-    foreach ($properties as $key => $value) {
-      $this->{$key} = $value;
+        return array('error' => 'Bad request');    
     }
-  }
 }
+

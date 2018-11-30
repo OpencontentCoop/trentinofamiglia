@@ -14,3 +14,30 @@
     </div>
   </div>
 {/if}
+
+
+{* Altre sedi --> organizzazioni pubblicahe con stesso cf*}
+{def $search_reverse_related = fetch('ezfind','search', hash(
+'limit',100,
+'class_id', array('public_organization', 'private_organization'),
+'filter', array(concat("attr_codice_fiscale_s:",$node.data_map.codice_fiscale.content))
+))
+$objects = $search_reverse_related.SearchResult
+$objects_count = $search_reverse_related.SearchCount}
+
+{if $objects_count|gt(1)}
+  <div class="content-related">
+    <div class="openpa-widget nav-section">
+      <h3 class="openpa-widget-title"><i class="fa fa-university" aria-hidden="true"></i> Altre sedi</h3>
+      <div class="openpa-widget-content Prose">
+        <ul class="Linklist Prose u-text-r-xs" style="margin-left:0 !important;">
+          {foreach $objects as $obj}
+            {if $node.contentobject_id|ne($obj.id)}
+              <li><a href="{$obj.global_url_alias|ezurl(no)}" class="u-text-xxs">{$obj.name}</a></li>
+            {/if}
+          {/foreach}
+        </ul>
+      </div>
+    </div>
+  </div>
+{/if}

@@ -5,6 +5,20 @@ $Module = $Params['Module'];
 $tpl = eZTemplate::factory();
 
 
+$object = eZContentObject::fetch(40725);
+echo '<pre>';
+print_r($object);
+exit;
+
+$dataMap = $object->dataMap();
+$content = $dataMap['tipo_azione']->content();
+
+
+echo '<pre>';
+echo $content['relation_list'][0]['contentobject_id'];
+exit;
+
+
 /*$fetch_parameters = array(
   'class_id'  => array('public_organization,private_organization'),
   'filter'    => array( 'attr_visibilita_b:false'),

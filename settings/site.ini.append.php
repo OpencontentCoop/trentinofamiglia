@@ -1,8 +1,10 @@
 <?php /*
 
+[TemplateSettings]
+ExtensionAutoloadPath[]=trentinofamiglia
+
 [RegionalSettings]
 TranslationExtensions[]=trentinofamiglia
-
 
 [Cache]
 CacheItems[]=trentinofamigliamaps

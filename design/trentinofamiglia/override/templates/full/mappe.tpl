@@ -35,3 +35,21 @@
 
 
 
+{include uri='design:parts/load_website_toolbar.tpl' current_user=fetch(user, current_user)}
+
+{if openpaini('GeneralSettings','valutation', 1)}
+    {ezpagedata_set( 'valuation', $node.node_id )}
+{/if}
+
+{def $homepage = fetch('openpa', 'homepage')}
+{if $homepage.node_id|eq($node.node_id)}
+    {ezpagedata_set('is_homepage', true())}
+{/if}
+
+{if $openpa.control_area_tematica.is_area_tematica}
+    {ezpagedata_set('is_area_tematica', $openpa.control_area_tematica.area_tematica.contentobject_id)}
+{/if}
+
+{if and( $homepage|has_attribute('partners'), $homepage|attribute('partners').has_content) }
+    {include uri='design:footer/partners.tpl' homepage=$homepage}
+{/if}

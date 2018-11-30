@@ -1,3 +1,5 @@
+{default show_title=true()}
+
 {* Certificazione family Audit*}
 {def $search_reverse_related = fetch('ezfind','search', hash(
 'limit',100,
@@ -7,7 +9,9 @@
 $objects = $search_reverse_related.SearchResult
 $objects_count = $search_reverse_related.SearchCount}
 
-<h3 class="u-text-h3 u-margin-top-m"><i class="fa fa-check-circle fa-lg" style="color: #00923f"></i> Certificazioni ed adesioni</h3>
+{if $show_title}
+  <h3 class="u-text-h3 u-margin-top-m"><i class="fa fa-check-circle fa-lg" style="color: #00923f"></i> Certificazioni ed adesioni</h3>
+{/if}
 {if $objects_count|gt(0)}
 
   <table class="Table Table--compact reverse-related" cellspacing="0">
@@ -17,7 +21,7 @@ $objects_count = $search_reverse_related.SearchCount}
       </td>
       <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
         {foreach $objects as $o}
-          <div>
+          <div style="line-height: 1.8em">
             {if $o.data_map.n_iscriz_registro.has_content}
               {$o.data_map.n_iscriz_registro.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.n_iscriz_registro}</strong><br />
             {/if}
@@ -77,7 +81,7 @@ $objects_count = $search_reverse_related.SearchCount}
       </td>
       <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
       {foreach $objects as $o}
-        <div>
+        <div style="line-height: 1.8em">
           {if $o.data_map.id_unico.has_content}
             {$o.data_map.id_unico.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.id_unico}</strong><br />
           {/if}
@@ -120,7 +124,7 @@ $objects_count = $search_reverse_related.SearchCount}
       </td>
       <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
       {foreach $objects as $o}
-        <div>
+        <div style="line-height: 1.8em">
           {if $o.data_map.id_unico.has_content}
             {$o.data_map.id_unico.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.id_unico}</strong><br />
           {/if}
@@ -164,7 +168,7 @@ $objects_count = $search_reverse_related.SearchCount}
       {foreach $objects as $o}
         {def $distretto = fetch( 'content', 'object', hash( 'object_id', $o.data_map.distretto.content.relation_list[0].contentobject_id ) )}
 
-        <div>
+        <div style="line-height: 1.8em">
           {if $o.data_map.distretto.has_content}
             {$o.data_map.distretto.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.distretto}</strong><br />
           {/if}
@@ -207,7 +211,7 @@ $objects_count = $search_reverse_related.SearchCount}
         {foreach $objects as $o}
           {def $distretto = fetch( 'content', 'object', hash( 'object_id', $o.data_map.distretto.content.relation_list[0].contentobject_id ) )}
 
-          <div>
+          <div style="line-height: 1.8em">
             {if $o.data_map.distretto.has_content}
               {$o.data_map.distretto.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.distretto}</strong><br />
             {/if}
@@ -248,7 +252,7 @@ $objects_count = $search_reverse_related.SearchCount}
       <td class="u-sm-size3of4 u-md-size3of4 u-lg-size3of4 Prose">
         {foreach $objects as $o}
           {def $distretto = fetch( 'content', 'object', hash( 'object_id', $o.data_map.distretto.content.relation_list[0].contentobject_id ) )}
-          <div>
+          <div style="line-height: 1.8em">
             {if $o.data_map.data_inizio_adesione.has_content}
               {$o.data_map.data_inizio_adesione.contentclass_attribute.name}: <strong>{attribute_view_gui attribute=$o.data_map.data_inizio_adesione}</strong><br />
             {/if}

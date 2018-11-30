@@ -30,7 +30,7 @@ class MapsCacheManager
     $fileHandler->fileDeleteByDirList( array( self::SUBDIRECTORY_NAME ), $commonPath, $commonSuffix );
   }
 
-  public static function retrieveCache( $file, $mtime, $hashIdentifier )
+  public static function retrieveCache( $file )
   {
     $content = include( $file );
     return $content;

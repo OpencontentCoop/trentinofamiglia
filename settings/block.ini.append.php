@@ -7,6 +7,7 @@ AllowedTypes[]=MappaFamilyInTrentino
 AllowedTypes[]=MappaDistrettoFamiglia
 AllowedTypes[]=MappaTnFam
 AllowedTypes[]=MappaTnFamReverse
+AllowedTypes[]=Newsletter
 
 [Query]
 Name=Lista automatica basata su query
@@ -114,3 +115,12 @@ ViewList[]=default
 ViewName[]
 ViewName[default]=Default
 ItemsPerRow[]
+
+[Newsletter]
+Name=Newsletter
+ManualAddingOfItems=disabled
+ViewList[]
+ViewList[]=newsletter
+ViewList[]=newsletter_wide
+ViewName[newsletter]=Boxed
+ViewName[newsletter_wide]=Wide

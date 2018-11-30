@@ -36,24 +36,6 @@
     {set $footerBlocksClass = concat('u-md-size1of', $footerBlocks, ' u-lg-size1of', $footerBlocks) }
 {/if}
 
-{if openpaini('GeneralSettings','valutation', 1)|eq(1)}
-    {if and( $ui_context|ne( 'edit' ), $ui_context|ne( 'browse' ) )}
-        {if $pagedata.class_identifier|ne('')}
-           {literal}<script>$(document).on('click', '#toggle-validation', function(e){$('#openpa-valuation').toggle();e.preventDefault();});</script>{/literal}
-            <div class="valutation-container u-padding-all-xl u-layoutCenter u-hiddenPrint" style="background-color: #00334c">
-                <p class="u-textCenter u-margin-top-m u-margin-bottom-m">
-                    <a href="#" id="toggle-validation" class="u-color-white u-textClean u-text-h3">
-                        <span class="u-padding-r-right Icon Icon-comment"></span> Valuta questo sito
-                    </a>
-                </p>
-                <div style="display: none" id="openpa-valuation">
-                    {include name=valuation node_id=$current_node_id uri='design:openpa/valuation.tpl'}
-                </div>
-            </div>
-        {/if}
-    {/if}
-{/if}
-
 
 {if and( $pagedata.homepage|has_attribute('partners'), $pagedata.homepage|attribute('partners').has_content) }
     {include uri='design:footer/partners.tpl'}
