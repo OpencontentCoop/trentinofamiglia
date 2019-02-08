@@ -35,9 +35,10 @@ class DataHandlerTnFamMapMarkersTest implements OpenPADataHandlerInterface
         null,
         $args
       );
-    }
+    }    
     return $this->maps[$hashIdentifier];*/
-    $content = self::find( $query, $attributes);
+    return $args;
+    return self::find( $query, $attributes);
   }
 
   public static function generateCache( $file, $args )
@@ -152,13 +153,14 @@ class DataHandlerTnFamMapMarkersTest implements OpenPADataHandlerInterface
 
     } catch (Exception $e) {
       eZDebug::writeError($e->getMessage() . " in query $query", __METHOD__);
+      return json_encode($e->getMessage());
     }
   }
 
 
   public function getData()
   {
-
+return $_GET;
     if ($this->contentType == 'geojson') {
 
       if (eZHTTPTool::instance()->hasVariable('query') && eZHTTPTool::instance()->hasVariable('attribute')) {

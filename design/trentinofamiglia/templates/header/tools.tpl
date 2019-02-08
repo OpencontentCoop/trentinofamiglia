@@ -58,7 +58,7 @@
                         </a>
                     </li>
                 {/if}
-              <li>
+              {*<li>
                 <a href="http://trentinofamiglia.voxmail.it/user/register" target="_blank">
                             <span class="openpa-icon fa-stack">
                                 <i class="fa fa-circle fa-stack-2x u-color-90"></i>
@@ -66,7 +66,7 @@
                             </span>
                   <span class="u-hiddenVisually">Newletter</span>
                 </a>
-              </li>
+              </li>*}
             </ul>
         {/if}
     </div>

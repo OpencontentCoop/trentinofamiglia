@@ -27,6 +27,8 @@
 
       {include uri=$openpa.content_infocollection.template}
 
+      {include uri='design:openpa/full/parts/organizations/piani_comunali.tpl'}
+
       {include uri='design:openpa/full/parts/organizations/certifications.tpl'}
 
       {include uri='design:openpa/full/parts/contacts_organizations.tpl'}

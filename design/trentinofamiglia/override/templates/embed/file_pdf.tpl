@@ -16,10 +16,9 @@
                 {/if}
             {else}
                 <div class="content-body attribute-{$file.content.mime_type_part|explode('.')|implode('-')}">
-                    <i class="fa mime-file mime-{$file.content.mime_type_part|explode('.')|implode('-')}"></i>
                     <a href={concat("content/download/", $file.contentobject_id, "/", $file.id, "/file/", $file.content.original_filename)|ezurl}>
-                      {$object.name|wash}{*$file.content.original_filename|wash("xhtml")*}
-                    </a> {$file.content.filesize|si(byte)}
+                      <i class="fa fa-file-{$file.content.mime_type_part|explode('.')|implode('-')}-o mime-file mime-{$file.content.mime_type_part|explode('.')|implode('-')}"></i> {$object.name|wash}{*$file.content.original_filename|wash("xhtml")*}
+                    </a> <span class="u-text-xxs">{$file.content.filesize|si(byte)}</span>
                 </div>
             {/if}
             {undef $file}

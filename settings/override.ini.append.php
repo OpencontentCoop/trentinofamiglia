@@ -22,6 +22,13 @@
 #Subdir=templates
 #Match[node]=1191
 
+
+[full_piani_comunali]
+Source=node/view/full.tpl
+MatchFile=full/piani_comunali.tpl
+Subdir=templates
+Match[node]=33783
+
 ############################################
 # Panel
 ############################################
@@ -147,3 +154,48 @@ MatchFile=block/lista_banner.tpl
 Subdir=templates
 Match[type]=Query
 Match[view]=lista_banner
+
+[block_newsletter_boxed]
+Source=block/view/view.tpl
+MatchFile=block/newsletter.tpl
+Subdir=templates
+Match[type]=Newsletter
+Match[view]=newsletter
+
+[block_newsletter_wide]
+Source=block/view/view.tpl
+MatchFile=block/newsletter.tpl
+Subdir=templates
+Match[type]=Newsletter
+Match[view]=newsletter_wide
+
+############################################
+# Attribute Edit
+############################################
+
+[edit_infrastruttura_image]
+Source=content/datatype/edit/ezobjectrelationlist.tpl
+MatchFile=datatype/edit/infrastruttura_image.tpl
+Subdir=templates
+Match[class_identifier]=infrastruttura_family
+Match[attribute_identifier]=image
+
+
+[edit_infrastruttura_organizzazione]
+Source=content/datatype/edit/ezobjectrelationlist.tpl
+MatchFile=datatype/edit/infrastruttura_organizzazione.tpl
+Subdir=templates
+Match[class_identifier]=infrastruttura_family
+Match[attribute_identifier]=organizzazione_proprietaria
+
+############################################
+# Attribute View
+############################################
+
+[view_comunicato_link_matrix]
+Source=content/datatype/view/ezmatrix.tpl
+MatchFile=datatype/view/ezmatrix_comunicato_link.tpl
+Subdir=templates
+Match[class_identifier]=comunicato
+Match[attribute_identifier]=link
+

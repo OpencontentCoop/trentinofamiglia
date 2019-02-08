@@ -2,6 +2,7 @@
 
   const opendataMap = {
     tools: null,
+    blockId: null,
     mapId: '',
     markersId: '',
     markers: null,
