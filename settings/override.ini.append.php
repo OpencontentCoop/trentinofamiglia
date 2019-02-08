@@ -23,11 +23,11 @@
 #Match[node]=1191
 
 
-[full_piani_comunali]
-Source=node/view/full.tpl
-MatchFile=full/piani_comunali.tpl
-Subdir=templates
-Match[node]=33783
+#[full_piani_comunali]
+#Source=node/view/full.tpl
+#MatchFile=full/piani_comunali.tpl
+#Subdir=templates
+#Match[node]=33783
 
 ############################################
 # Panel

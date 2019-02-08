@@ -6,8 +6,8 @@ Identifiers[]=infrastruttura_family
 
 [piano_comunale]
 Name=Dashboard Piani Comunali
-CreationRepositoryNode=33783
-RepositoryNodes[]=33783
+CreationRepositoryNode=43843
+RepositoryNodes[]=43843
 ClassName=PianoComunaleFactory
 ClassIdentifier=piano_comunale
 CreationButtonText=Crea un nuovo piano comunale
@@ -20,8 +20,8 @@ NotificationAttributeIdentifiers[]
 
 [infrastruttura_family]
 Name=Dashboard Infrastrutture Family
-CreationRepositoryNode=33887
-RepositoryNodes[]=33887
+CreationRepositoryNode=43846
+RepositoryNodes[]=43846
 ClassName=InfrastrutturaFamilyFactory
 ClassIdentifier=infrastruttura_family
 CreationButtonText=Crea nuova Infrastruttura Family
