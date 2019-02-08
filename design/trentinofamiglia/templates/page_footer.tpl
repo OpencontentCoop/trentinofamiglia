@@ -36,10 +36,6 @@
     {set $footerBlocksClass = concat('u-md-size1of', $footerBlocks, ' u-lg-size1of', $footerBlocks) }
 {/if}
 
-
-{if and( $pagedata.homepage|has_attribute('partners'), $pagedata.homepage|attribute('partners').has_content) }
-    {include uri='design:footer/partners.tpl'}
-{/if}
 <div class="footer-container u-hiddenPrint">
   <div class="u-layout-wide u-layoutCenter u-layout-r-withGutter">
     <footer class="Footer u-hiddenPrint">
