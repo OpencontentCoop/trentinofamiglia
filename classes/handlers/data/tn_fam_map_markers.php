@@ -165,15 +165,27 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
 
             $count = 0;
             $features = array();
-            $query = 'id = [' . implode(',', array_unique($searchIdList)) . ']';
-            while ($query) {
-                $this->queryList[] = $query;
-                $results = $contentSearch->search($query);
 
-                $count = $results->totalCount;
-                $features = array_merge($features, $results->features);                
-                $query = $results->nextPageQuery;
+            foreach ($searchIdList as $id) {
+                $object = eZContentObject::fetch((int)$id);
+                if ($object instanceof eZContentObject){
+                    $count++;
+                    $features[] = Content::createFromEzContentObject($object)->geoJsonSerialize(eZLocale::currentLocaleCode());
+                }
             }
+
+            // $searchIdListChunks = array_chunk($searchIdList, 20);
+            // foreach ($searchIdListChunks as $searchIdListChunk) {
+            //     $query = 'id = [' . implode(',', array_unique($searchIdListChunk)) . ']';
+            //     while ($query) {
+            //         $this->queryList[] = $query;
+            //         $results = $contentSearch->search($query);
+
+            //         $count += $results->totalCount;
+            //         $features = array_merge($features, $results->features);                
+            //         $query = $results->nextPageQuery;
+            //     }
+            // }
             
             $collection->query = $this->queryList;
             $collection->features = $features;
@@ -183,7 +195,10 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
             return $collection;
 
         } catch (Exception $e) {            
-            return array('error' => $e->getMessage());
+            return array(
+                'error' => $e->getMessage(),
+                'query' => $this->queryList
+            );
         }
     }
 }

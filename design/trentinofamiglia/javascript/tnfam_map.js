@@ -26,13 +26,13 @@
             buildQuery: function () {
                 var currentValues = this.getCurrent();
                 if (currentValues.length && jQuery.inArray('all', currentValues) == -1) {
-                    return queryField+' in [\'' + $.map(currentValues, function (item) {
+                    return queryField+' in [\'"' + $.map(currentValues, function (item) {
                         return item.toString()
                             .replace(/"/g, '\\\"')
                             .replace(/'/g, "\\'")
                             .replace(/\(/g, "\\(")
                             .replace(/\)/g, "\\)");
-                    }).join("','") + '\']';
+                    }).join("','") + '"\']';
                 }
 
                 return null;
