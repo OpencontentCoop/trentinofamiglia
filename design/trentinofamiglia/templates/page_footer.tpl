@@ -13,14 +13,16 @@
     {set $footerBlocks = $footerBlocks|sub(1)}
 {/if}
 
-{if or(is_set($pagedata.contacts.indirizzo), is_set($pagedata.contacts.telefono), is_set($pagedata.contacts.fax),
-       is_set($pagedata.contacts.email), is_set($pagedata.contacts.pec), is_set($pagedata.contacts.web))}
+{def $contacts = $pagedata.contacts}
+
+{if or(is_set($contacts.indirizzo), is_set($contacts.telefono), is_set($contacts.fax),
+       is_set($contacts.email), is_set($contacts.pec), is_set($contacts.web))}
     {set $has_contacts = true()}
 {else}
     {set $footerBlocks = $footerBlocks|sub(1)}
 {/if}
 
-{if or(is_set($pagedata.contacts.facebook), is_set($pagedata.contacts.twitter), is_set($pagedata.contacts.linkedin), is_set($pagedata.contacts.instagram))}
+{if or(is_set($contacts.facebook), is_set($contacts.twitter), is_set($contacts.linkedin), is_set($contacts.instagram))}
     {set $has_social = true()}
 {else}
     {set $footerBlocks = $footerBlocks|sub(1)}
