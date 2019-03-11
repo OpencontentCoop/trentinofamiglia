@@ -157,17 +157,18 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
                 foreach ($this->attributes as $attribute) {
                     if (isset($hit['data'][$language][$attribute])) {
                         foreach ($hit['data'][$language][$attribute]['content'] as $gObject) {
-                            $searchIdList[] = $gObject['id'];
+                            $searchIdList[$gObject['id']] = $gObject['id'];
                         }
                     }
                 }
             }
-          array_unique($searchIdList);
+
+            $idList = array_unique($searchIdList);
 
             $count = 0;
             $features = array();
 
-            foreach ($searchIdList as $id) {
+            foreach ($idList as $id) {
                 $object = eZContentObject::fetch((int)$id);
                 if ($object instanceof eZContentObject){
                     $count++;
