@@ -36,7 +36,13 @@ class InfrastrutturePianoComunaleConnector extends AbstractBaseConnector
     // Infrastrutture presenti
     $dataMap = $this->object->dataMap();
 
-    $this->infrastrutture = $this->contentSearch->search("select-fields [metadata.id => metadata.name] classes [infrastruttura_family] and raw[submeta_organizzazione_proprietaria___id____si] = {$dataMap['organizzazione']->toString()}");
+    //$this->infrastrutture = $this->contentSearch->search("select-fields [metadata.id => metadata.name] classes [infrastruttura_family] and raw[submeta_organizzazione_proprietaria___id____si] = {$dataMap['organizzazione']->toString()}");
+    $language = eZLocale::currentLocaleCode();
+    //$this->tipologie = $this->contentSearch->search("select-fields [metadata.id => metadata.name] classes [tipo_azione] and raw[submeta_macroambito_family___id____si] = {$this->ambito->ID}");
+    $infra = $this->contentSearch->search("classes [infrastruttura_family] and raw[submeta_organizzazione_proprietaria___id____si] = {$dataMap['organizzazione']->toString()}");
+    foreach ($infra->searchHits as $t) {
+      $this->infrastrutture[$t['metadata']['id']] = $t['metadata']['name'][$language];
+    }
   }
 
   protected function getData()

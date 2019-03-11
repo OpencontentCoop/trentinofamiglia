@@ -12,11 +12,11 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
     public $contentType = 'geojson';
 
     private $query;
-    
+
     private $attributes;
 
     private $attributesString;
-    
+
     private $block;
 
     private $queryList = array();
@@ -26,7 +26,7 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
         if (eZHTTPTool::instance()->hasGetVariable('contentType')){
             $this->contentType = eZHTTPTool::instance()->getVariable('contentType');
         }
-        
+
         if ($this->contentType == 'geojson'){
             if (isset($Params['Parameters'][1])) {
                 $blockId = $Params['Parameters'][1];
@@ -35,7 +35,7 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
 
             if ($this->block instanceof eZPageBlock && $this->block->attribute('type') == "MappaTnFam") {
                 $attributes = $this->block->attribute('custom_attributes');
-                
+
                 $this->query = $attributes['query'];
                 if (eZHTTPTool::instance()->hasGetVariable('q')){
                     $this->query .= ' and ' . urldecode(eZHTTPTool::instance()->getVariable('q'));
@@ -75,7 +75,7 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
             return $data;
 
         }elseif ($this->query && $this->attributes) {
-            
+
             $blockId = $this->block ? $this->block->attribute('id') : '';
             $hashIdentifier = md5(trim($blockId . '-' . $this->query . '-' . $this->attributesString));
 
@@ -91,9 +91,9 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
                       'datatype' => 'php',
                       'store' => true
                     );
-                }                
-            );            
-        } 
+                }
+            );
+        }
 
         return array('error' => 'Bad request');
     }
@@ -102,7 +102,7 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
     {
         if ($query === null)
             $query = $this->query;
-        
+
         $contentRepository = new ContentRepository();
         $contentSearch = new ContentSearch();
         $currentEnvironment = new FullEnvironmentSettings();
@@ -116,7 +116,7 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
         $count = 0;
         $facets = array();
         $query .= ' and limit ' . $currentEnvironment->getMaxSearchLimit();
-        
+
         while ($query) {
             $this->queryList[] = $query;
             $results = $contentSearch->search($query);
@@ -145,14 +145,14 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
         $contentRepository->setEnvironment($currentEnvironment);
         $contentSearch->setEnvironment($currentEnvironment);
 
-        $collection = new FeatureCollection();        
+        $collection = new FeatureCollection();
         $language = eZLocale::currentLocaleCode();
         try {
-            
+
             $data = $this->findAll();
             $collection->facets = $data->facets;
-            
-            $searchIdList = array();            
+
+            $searchIdList = array();
             foreach ($data->searchHits as $hit) {
                 foreach ($this->attributes as $attribute) {
                     if (isset($hit['data'][$language][$attribute])) {
@@ -162,6 +162,7 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
                     }
                 }
             }
+          array_unique($searchIdList);
 
             $count = 0;
             $features = array();
@@ -182,19 +183,19 @@ class DataHandlerTnFamMapMarkers implements OpenPADataHandlerInterface
             //         $results = $contentSearch->search($query);
 
             //         $count += $results->totalCount;
-            //         $features = array_merge($features, $results->features);                
+            //         $features = array_merge($features, $results->features);
             //         $query = $results->nextPageQuery;
             //     }
             // }
-            
+
             $collection->query = $this->queryList;
             $collection->features = $features;
             $collection->totalCount = $count;
-            
-            
+
+
             return $collection;
 
-        } catch (Exception $e) {            
+        } catch (Exception $e) {
             return array(
                 'error' => $e->getMessage(),
                 'query' => $this->queryList

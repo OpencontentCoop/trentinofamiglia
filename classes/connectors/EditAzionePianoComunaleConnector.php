@@ -43,8 +43,12 @@ class EditAzionePianoComunaleConnector extends AbstractBaseConnector
     $this->contentSearch->setEnvironment(EnvironmentLoader::loadPreset("content"));
 
     // Tipologie
-    $this->tipologie = $this->contentSearch->search("select-fields [metadata.id => metadata.name] classes [tipo_azione] and raw[submeta_macroambito_family___id____si] = {$this->ambito}");
-
+    $language = eZLocale::currentLocaleCode();
+    //$this->tipologie = $this->contentSearch->search("select-fields [metadata.id => metadata.name] classes [tipo_azione] and raw[submeta_macroambito_family___id____si] = {$this->ambito->ID}");
+    $types = $this->contentSearch->search("classes [tipo_azione] and raw[submeta_macroambito_family___id____si] = {$this->ambito->ID}");
+    foreach ($types->searchHits as $t) {
+      $this->tipologie[$t['metadata']['id']] = $t['metadata']['name'][$language];
+    }
 
     $this->tagRepository = new TagRepository();
     // Attività
