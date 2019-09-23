@@ -17,6 +17,9 @@ path=maps/data
 isClustered=true
 class=TrentinoFamigliaMapsRepositoryCache
 
-
+[UserSettings]
+UserClassID=557
+LoginRedirectionUriAttribute[user]=home_uri
+GeneratePasswordIfEmpty=false
 
 */ ?>
