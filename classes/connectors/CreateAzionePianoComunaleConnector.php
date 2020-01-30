@@ -287,11 +287,11 @@ class CreateAzionePianoComunaleConnector extends AbstractBaseConnector
     $params['attributes'] = array(
       'titolo'                         => $_POST['titolo'],
       'tipo_azione'                    => $_POST['tipo_azione'],
-      'attivita'                       => $_POST['attivita'],
+      'attivita'                       => $this->generateTagInput('attivita', $_POST['attivita']),
       'descrizione'                    => $_POST['descrizione'],
       'obiettivo'                      => $_POST['obiettivo'],
       'assessorato'                    => $_POST['assessorato'],
-      'tipologia_partnership'          => $_POST['tipologia_partnership'],
+      'tipologia_partnership'          => $this->generateTagInput('tipologia_partnership', $_POST['tipologia_partnership']),
       'organizzazioni_coinvolte'       => implode(',', $organizzazioniCoinvolte),
       'altre_organizzazioni_coinvolte' => $_POST['altre_organizzazioni_coinvolte'],
       'indicatore'                     => $_POST['indicatore'],
@@ -312,6 +312,37 @@ class CreateAzionePianoComunaleConnector extends AbstractBaseConnector
     }
     return false;
 
+  }
+
+  private function generateTagInput( $attributeIdentifier, $value ) {
+
+    $class = eZContentClass::fetchByIdentifier('azione');
+    $attribute = $class->fetchAttributeByIdentifier($attributeIdentifier);
+    $subtreeLimitation =  $attribute->attribute(eZTagsType::SUBTREE_LIMIT_FIELD);
+    $locale =  eZLocale::currentLocaleCode();
+
+    if ( is_array($value) ) {
+      $data = $value;
+    } else {
+      $data = explode(',', $value );
+    }
+
+    $ids      = array();
+    $keywords = array();
+    $subtree  = array();
+    $locales  = array();
+    $returnArray = array();
+    foreach ($data as $d) {
+      $ids[] = '0';
+      $keywords[] = $d;
+      $subtree[] = $subtreeLimitation;
+      $locales[] = $locale;
+    }
+    $returnArray []= implode( '|#', $ids );
+    $returnArray []= implode( '|#', $keywords );
+    $returnArray []= implode( '|#', $subtree );
+    $returnArray []= implode( '|#', $locales );
+    return implode( '|#', $returnArray );
   }
 
   protected function upload()
