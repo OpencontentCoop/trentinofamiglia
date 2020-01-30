@@ -37,13 +37,13 @@
 {def $has_sidebar = false()
 $has_social  = true()}
 {if or(
-$node|has_attribute( 'allegati' ),
-$node|has_attribute( 'audio' ),
-$node|has_attribute( 'fonte' ),
-gt($video|count,1),
-$node|has_attribute( 'geo' ),
-$matrix_link_has_content,
-$has_social
+  $node|has_attribute( 'allegati' ),
+  $node|has_attribute( 'audio' ),
+  $node|has_attribute( 'fonte' ),
+  gt($video|count,1),
+  $node|has_attribute( 'geo' ),
+  $matrix_link_has_content,
+  $has_social
 )}
   {set $has_sidebar = true()}
 {/if}
@@ -107,19 +107,19 @@ $has_social
     {if $has_sidebar}
       <div class="extra">
 
-        {if $matrix_link_has_content}
-          <h2 class="openpa-widget-title"><i class="fa fa-link"></i> Link</h2>
-          <div class="openpa-widget nav-section">
-            {attribute_view_gui attribute=$node|attribute( 'link' )}
-          </div>
-        {/if}
-
         {if $node|has_attribute( 'fonte' )}
           <h2 class="openpa-widget-title"><i class="fa fa-code-fork"></i> Fonte</h2>
           <div class="openpa-widget nav-section">
             <ul class="Linklist Linklist--padded">
               <li>{attribute_view_gui attribute=$node|attribute( 'fonte' )}</li>
             </ul>
+          </div>
+        {/if}
+
+        {if $matrix_link_has_content}
+          <h2 class="openpa-widget-title"><i class="fa fa-link"></i> {$node|attribute( 'link' ).contentclass_attribute_name}</h2>
+          <div class="openpa-widget nav-section">
+            {attribute_view_gui attribute=$node|attribute( 'link' )}
           </div>
         {/if}
 
