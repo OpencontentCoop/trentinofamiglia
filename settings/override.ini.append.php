@@ -188,6 +188,12 @@ Subdir=templates
 Match[class_identifier]=infrastruttura_family
 Match[attribute_identifier]=organizzazione_proprietaria
 
+[edit_gmaplocation]
+Source=content/datatype/edit/ezgmaplocation.tpl
+MatchFile=edit/datatype/ezosmaplocation.tpl
+Subdir=templates
+Match[attribute_identifier]=geo
+
 ############################################
 # Attribute View
 ############################################
