@@ -188,6 +188,12 @@ Subdir=templates
 Match[class_identifier]=infrastruttura_family
 Match[attribute_identifier]=organizzazione_proprietaria
 
+[edit_gmaplocation]
+Source=content/datatype/edit/ezgmaplocation.tpl
+MatchFile=edit/datatype/ezosmaplocation.tpl
+Subdir=templates
+Match[attribute_identifier]=geo
+
 ############################################
 # Attribute View
 ############################################
@@ -198,4 +204,18 @@ MatchFile=datatype/view/ezmatrix_comunicato_link.tpl
 Subdir=templates
 Match[class_identifier]=comunicato
 Match[attribute_identifier]=link
+
+[view_public_service_contact_point_relationslist]
+Source=content/datatype/view/ezobjectrelationlist.tpl
+MatchFile=datatype/view/ezobjectrelationlist_public_service_contact_point.tpl
+Subdir=templates
+Match[class_identifier]=public_service
+Match[attribute_identifier]=contact_point
+
+[view_public_service_input_relationslist]
+Source=content/datatype/view/ezobjectrelationlist.tpl
+MatchFile=datatype/view/ezobjectrelationlist_public_service_input.tpl
+Subdir=templates
+Match[class_identifier]=public_service
+Match[attribute_identifier]=input
 

@@ -25,8 +25,6 @@
 
       {include uri=$openpa.content_contacts.template}
 
-      {include uri='design:openpa/full/parts/exploded_contact_points.tpl' attribute_name='contact_point' hide_title=$openpa.content_contacts.has_content}
-
       {include uri=$openpa.content_detail.template}
 
       {include uri=$openpa.content_infocollection.template}

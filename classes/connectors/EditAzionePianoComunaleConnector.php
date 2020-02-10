@@ -45,7 +45,7 @@ class EditAzionePianoComunaleConnector extends AbstractBaseConnector
     // Tipologie
     $language = eZLocale::currentLocaleCode();
     //$this->tipologie = $this->contentSearch->search("select-fields [metadata.id => metadata.name] classes [tipo_azione] and raw[submeta_macroambito_family___id____si] = {$this->ambito->ID}");
-    $types = $this->contentSearch->search("classes [tipo_azione] and raw[submeta_macroambito_family___id____si] = {$this->ambito->ID}");
+    $types = $this->contentSearch->search("classes [tipo_azione] and raw[submeta_macroambito_family___id____si] = {$this->ambito}");
     foreach ($types->searchHits as $t) {
       $this->tipologie[$t['metadata']['id']] = $t['metadata']['name'][$language];
     }
@@ -100,15 +100,16 @@ class EditAzionePianoComunaleConnector extends AbstractBaseConnector
     $data = array(
       'titolo' => $dataMap['titolo']->toString(),
       'tipo_azione' => $dataMap['tipo_azione']->toString(),
-      'attivita' => $dataMap['attivita']->toString(),
+      'attivita' => implode(',',$dataMap['attivita']->content()->attribute('keywords')),
       'descrizione' => $dataMap['descrizione']->toString(),
       'obiettivo' => $dataMap['obiettivo']->toString(),
       'assessorato' => $dataMap['assessorato']->toString(),
-      'tipologia_partnership' => $dataMap['tipologia_partnership']->toString(),
+      'tipologia_partnership' => implode(',',$dataMap['tipologia_partnership']->content()->attribute('keywords')),
       'organizzazioni_coinvolte' => $organizzazioni,
       'altre_organizzazioni_coinvolte' => $dataMap['altre_organizzazioni_coinvolte']->toString(),
       'indicatore' => $dataMap['indicatore']->toString()
     );
+
     return $data;
   }
 
@@ -297,11 +298,11 @@ class EditAzionePianoComunaleConnector extends AbstractBaseConnector
     $params['attributes'] = array(
       'titolo'                         => $_POST['titolo'],
       'tipo_azione'                    => $_POST['tipo_azione'],
-      'attivita'                       => $_POST['attivita'],
+      'attivita'                       => $this->generateTagInput('attivita', $_POST['attivita']),
       'descrizione'                    => $_POST['descrizione'],
       'obiettivo'                      => $_POST['obiettivo'],
       'assessorato'                    => $_POST['assessorato'],
-      'tipologia_partnership'          => $_POST['tipologia_partnership'],
+      'tipologia_partnership'          => $this->generateTagInput('tipologia_partnership', $_POST['tipologia_partnership']),
       'organizzazioni_coinvolte'       => implode(',', $organizzazioniCoinvolte),
       'altre_organizzazioni_coinvolte' => $_POST['altre_organizzazioni_coinvolte'],
       'indicatore'                     => $_POST['indicatore'],
@@ -309,6 +310,37 @@ class EditAzionePianoComunaleConnector extends AbstractBaseConnector
 
     $result = eZContentFunctions::updateAndPublishObject($this->object, $params);
     return $result;
+  }
+
+  private function generateTagInput( $attributeIdentifier, $value ) {
+
+    $class = eZContentClass::fetchByIdentifier('azione');
+    $attribute = $class->fetchAttributeByIdentifier($attributeIdentifier);
+    $subtreeLimitation =  $attribute->attribute(eZTagsType::SUBTREE_LIMIT_FIELD);
+    $locale =  eZLocale::currentLocaleCode();
+
+    if ( is_array($value) ) {
+      $data = $value;
+    } else {
+      $data = explode(',', $value );
+    }
+
+    $ids      = array();
+    $keywords = array();
+    $subtree  = array();
+    $locales  = array();
+    $returnArray = array();
+    foreach ($data as $d) {
+      $ids[] = '0';
+      $keywords[] = $d;
+      $subtree[] = $subtreeLimitation;
+      $locales[] = $locale;
+    }
+    $returnArray []= implode( '|#', $ids );
+    $returnArray []= implode( '|#', $keywords );
+    $returnArray []= implode( '|#', $subtree );
+    $returnArray []= implode( '|#', $locales );
+    return implode( '|#', $returnArray );
   }
 
   protected function upload()

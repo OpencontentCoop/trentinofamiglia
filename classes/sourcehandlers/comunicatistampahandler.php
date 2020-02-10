@@ -2,7 +2,7 @@
 
 use Opencontent\Opendata\Rest\Client\HttpClient;
 
-class ComunicatiStampaHandler extends SQLIImportAbstractHandler implements ISQLIImportHandler
+class TNFamComunicatiStampaHandler extends SQLIImportAbstractHandler implements ISQLIImportHandler
 {
 	protected $rowIndex = 0;
 	
@@ -39,7 +39,19 @@ class ComunicatiStampaHandler extends SQLIImportAbstractHandler implements ISQLI
 		}else{
 			$this->parentNodeID = $this->handlerConfArray['DefaultParentNodeID'];
 		}
-		$this->loadData($this->handlerConfArray['Endpoint'] . rawurlencode($this->handlerConfArray['Query']));
+
+		$query = $this->handlerConfArray['Query'];
+		$startDate = '2020-01-01';
+		$currentImportId = SQLIImportFactory::instance()->getCurrentImportItem()->attribute('id');
+		$lastImportItem = eZDB::instance()->arrayQuery("SELECT * FROM sqliimport_item WHERE handler = 'comunicatistampa' AND id != $currentImportId ORDER BY requested_time desc LIMIT 1");
+		if(count($lastImportItem) > 0){
+			$lastTimestamp = $lastImportItem[0]['requested_time'];
+			$lastTimestamp = $lastTimestamp - 86400;
+			$startDate = date('Y-m-d', $lastTimestamp);
+		}
+		$query = str_replace('%start_date%', $startDate, $query);
+		$this->cli->output("Load data: $query");
+		$this->loadData($this->handlerConfArray['Endpoint'] . rawurlencode($query));
 
 		$this->remoteUrl = parse_url($this->handlerConfArray['Endpoint'], PHP_URL_SCHEME) . '://' . parse_url($this->handlerConfArray['Endpoint'], PHP_URL_HOST);
 
@@ -183,8 +195,8 @@ class ComunicatiStampaHandler extends SQLIImportAbstractHandler implements ISQLI
 		foreach ($sourceList as $item) {
 			if (isset($item['mainNodeId'])){
 				$links[] = array(
-					'name' => $item['name'][$this->language],
-					'url' => $this->remoteUrl . '/content/view/full/' . $item['mainNodeId']
+					'url' => $this->remoteUrl . '/content/view/full/' . $item['mainNodeId'],
+					'site' => $item['name'][$this->language],					
 				);
 			}
 		}
