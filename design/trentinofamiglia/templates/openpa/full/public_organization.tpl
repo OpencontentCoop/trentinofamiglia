@@ -46,6 +46,11 @@
   {if $openpa.content_date.show_date}
     {include uri=$openpa.content_date.template}
   {/if}
+  {def $object_id = $node.contentobject_id
+       $json = $object_id|easyontology_to_json('public-organization')}
+  {if $json}
+    <script type="application/ld+json">{$json}</script>
+  {/if}
 </div>
 
 
