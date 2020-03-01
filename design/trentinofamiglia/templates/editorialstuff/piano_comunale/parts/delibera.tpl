@@ -50,7 +50,7 @@
     </div>
   </div>
 
-  {def $attributes = array('numero_delibera', 'data_delibera', 'delibera_pdf')}
+  {def $attributes = array('numero_delibera', 'data_delibera', 'piano_pdf', 'delibera_pdf')}
 
   {foreach $attributes as $attribute}
     <div class="content-detail-item withLabel">

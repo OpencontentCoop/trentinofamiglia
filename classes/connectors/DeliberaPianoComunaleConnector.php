@@ -24,6 +24,7 @@ class DeliberaPianoComunaleConnector extends AbstractBaseConnector
     protected $fields = array(
         'numero_delibera',
         'data_delibera',
+        'piano_pdf',
         'delibera_pdf'
     );
 
@@ -188,6 +189,7 @@ class DeliberaPianoComunaleConnector extends AbstractBaseConnector
         $params['attributes'] = array(
             'numero_delibera' => $fieldsData['numero_delibera'],
             'data_delibera' => date("U", strtotime($fieldsData['data_delibera'])),
+            'piano_pdf' => $this->getTemporaryFilePath($fieldsData['piano_pdf']['filename'], $fieldsData['file']),
             'delibera_pdf' => $this->getTemporaryFilePath($fieldsData['delibera_pdf']['filename'], $fieldsData['file'])
         );
         $result = eZContentFunctions::updateAndPublishObject($this->object, $params);

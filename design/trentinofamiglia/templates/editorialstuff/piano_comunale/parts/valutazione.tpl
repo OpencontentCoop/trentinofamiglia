@@ -1,5 +1,40 @@
 {if $post.is_published}
   <div class="Grid-cell u-sizeFull">
+    <form id="form-valutazione-globale" class="u-background-white"></form>
+    <script>
+      {literal}
+      $(document).ready(function () {
+
+        $('#form-valutazione-globale').opendataFormEdit({
+          object: "{/literal}{$post.object.id}{literal}"
+        }, {
+          connector: 'edit-valutazione-globale-piano-comunale',
+          onSuccess: function (data) {
+            console.log(data);
+            if (data) {
+              $('#form-valutazione-globale')
+                      .prepend('<div style="margin: 0 10px" class="Alert Alert--success u-text-h6" id="feedback-valutazione-globale">Delibera salvata con successo</div>')
+                      .children(':first')
+                      .delay(5000)
+                      .fadeOut(200);
+
+            } else {
+              $('#form-valutazione-globale')
+                      .prepend('<div style="margin: 0 10px" class="Alert Alert--error u-text-h6" id="feedback-valutazione-globale">Si è verificato un errore durante il salvataggio</div>')
+                      .children(':first')
+                      .delay(5000)
+                      .fadeOut(200);
+            }
+            $('html, body').animate({
+              scrollTop: $('#feedback-valutazione-globale').offset().top
+            }, 1000);
+          }
+        });
+      });
+      {/literal}
+    </script>
+  </div>
+  <div class="Grid-cell u-sizeFull">
     <div id="dashboard-tabs">
       <ul class="nav nav-tabs">
         {def $count = 0}

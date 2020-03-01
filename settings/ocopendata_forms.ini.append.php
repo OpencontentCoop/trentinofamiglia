@@ -12,6 +12,7 @@ AvailableConnectors[]=piani-pregressi-piano-comunale
 AvailableConnectors[]=dati-demografici-piano-comunale
 AvailableConnectors[]=create-valutazione-piano-comunale
 AvailableConnectors[]=delibera-piano-comunale
+AvailableConnectors[]=edit-valutazione-globale-piano-comunale
 AvailableConnectors[]=edit-valutazione-piano-comunale
 
 
@@ -47,6 +48,9 @@ PHPClass=CreateValutazionePianoComunaleConnector
 
 [delibera-piano-comunale_ConnectorSettings]
 PHPClass=DeliberaPianoComunaleConnector
+
+[edit-valutazione-globale-piano-comunale_ConnectorSettings]
+PHPClass=EditValutazioneGlobalePianoComunaleConnector
 
 [edit-valutazione-piano-comunale_ConnectorSettings]
 PHPClass=EditValutazionePianoComunaleConnector

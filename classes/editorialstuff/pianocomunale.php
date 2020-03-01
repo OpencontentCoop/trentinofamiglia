@@ -156,16 +156,18 @@ class PianoComunale extends OCEditorialStuffPostDefault
     $states = $this->states();
     if ( isset( $states[$stateIdentifier] ) && $states[$stateIdentifier]->attribute( 'identifier' ) == self::STATE_PENDING) {
 
-      if ($this->hasMissingActions()) {
+      // Elimino per consetire di aggiungere piani pregressi
+      /*if ($this->hasMissingActions()) {
         throw new Exception("Non è stato possibile completare l'operazione. <br /> Alcune azioni obbligatorie non sono ancora presenti!");
-      }
+      }*/
     }
 
     if ( isset( $states[$stateIdentifier] ) && $states[$stateIdentifier]->attribute( 'identifier' ) == self::STATE_PUBLISHED) {
 
-      if ($this->hasMissingActions()) {
+      // Elimino per consetire di aggiungere piani pregressi
+      /*if ($this->hasMissingActions()) {
         throw new Exception("Non è stato possibile completare l'operazione. <br /> Alcune azioni obbligatorie non sono ancora presenti!");
-      }
+      }*/
 
       if (!$this->hasDeliberaData()) {
         throw new Exception("Non è stato possibile completare l'operazione. <br /> I dati sulla delibera non sono ancora presenti!");
@@ -222,7 +224,7 @@ class PianoComunale extends OCEditorialStuffPostDefault
 
       array(
         'identifier' => 'delibera',
-        'name' => "Delibera di approvazione",
+        'name' => "Fase di approvazione",
         'template_uri' => "design:{$templatePath}/parts/delibera.tpl"
       ),
 
