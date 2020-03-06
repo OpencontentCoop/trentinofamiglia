@@ -3,6 +3,8 @@
 class PianoComunale extends OCEditorialStuffPostDefault
 {
 
+  const TERRITORIO_NO_ACTIONS = 'Italia';
+
   const STATE_DRAFT   = 'draft';
   const STATE_PENDING   = 'pending';
   const STATE_PUBLISHED = 'published';
@@ -153,11 +155,12 @@ class PianoComunale extends OCEditorialStuffPostDefault
 
   public function setState( $stateIdentifier )
   {
+
     $states = $this->states();
     if ( isset( $states[$stateIdentifier] ) && $states[$stateIdentifier]->attribute( 'identifier' ) == self::STATE_PENDING) {
 
       // Elimino per consetire di aggiungere piani pregressi
-      /*if ($this->hasMissingActions()) {
+      /*if ($this->hasMissingActions() && $this->dataMap['territorio']->toString() != self::TERRITORIO_NO_ACTIONS) {
         throw new Exception("Non è stato possibile completare l'operazione. <br /> Alcune azioni obbligatorie non sono ancora presenti!");
       }*/
     }
@@ -165,7 +168,7 @@ class PianoComunale extends OCEditorialStuffPostDefault
     if ( isset( $states[$stateIdentifier] ) && $states[$stateIdentifier]->attribute( 'identifier' ) == self::STATE_PUBLISHED) {
 
       // Elimino per consetire di aggiungere piani pregressi
-      /*if ($this->hasMissingActions()) {
+      /*if ($this->hasMissingActions() &&  $this->dataMap['territorio']->toString() != self::TERRITORIO_NO_ACTIONS) {
         throw new Exception("Non è stato possibile completare l'operazione. <br /> Alcune azioni obbligatorie non sono ancora presenti!");
       }*/
 

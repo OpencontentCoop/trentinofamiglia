@@ -69,6 +69,11 @@
       });
     </script>
     <style>
+
+      .radio.alpaca-control {
+        padding-left: 20px;
+      }
+
       li.ui-state-active a {
         background-color: rgb(59, 59, 59) !important;
         color: #fff !important;

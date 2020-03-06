@@ -6,6 +6,8 @@ use Opencontent\Opendata\Api\TagRepository;
 class CreatePianoComunaleConnector extends AbstractBaseConnector
 {
 
+  const TERRITORIO_DEFAULT = 'Trentino';
+
   protected $tagRepository;
 
   private $class;
@@ -173,7 +175,8 @@ class CreatePianoComunaleConnector extends AbstractBaseConnector
     $params['attributes'] = array(
       'anno'            => $this->generateTagInput('anno', $_POST['anno']),
       'organizzazione'  => implode('-', $this->organizzazione),
-      'piani_pregressi' => implode('-', $pianiPregressi)
+      'piani_pregressi' => implode('-', $pianiPregressi),
+      'territorio'      => CreatePianoComunaleConnector::TERRITORIO_DEFAULT
       //'data_delibera' => PianiComunaliHelper::stringToTime($_POST['data_delibera'], 'd/m/Y')
     );
     $result = eZContentFunctions::createAndPublishObject($params);

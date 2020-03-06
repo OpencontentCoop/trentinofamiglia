@@ -5,6 +5,8 @@ use Opencontent\Opendata\Api\TagRepository;
 
 class ContestoPianoComunaleConnector extends AbstractBaseConnector
 {
+  const VALUES_TERRITORIO = array('Trentino', 'Italia');
+
   protected $tagRepository;
 
   private $object;
@@ -53,6 +55,7 @@ class ContestoPianoComunaleConnector extends AbstractBaseConnector
       'nome_referente_tecnico' => $dataMap['nome_referente_tecnico']->toString(),
       'email_referente_tecnico' => $dataMap['email_referente_tecnico']->toString(),
       'telefono_referente_tecnico' => $dataMap['telefono_referente_tecnico']->toString(),
+      'territorio' => $dataMap['territorio']->toString() != null ? $dataMap['territorio']->toString() : CreatePianoComunaleConnector::TERRITORIO_DEFAULT,
     );
     return $data;
   }
@@ -97,6 +100,11 @@ class ContestoPianoComunaleConnector extends AbstractBaseConnector
       'telefono_referente_tecnico' => array(
         'title' => $dataMap['telefono_referente_tecnico']->name(),
         'required' => filter_var($dataMap['telefono_referente_tecnico']->IsRequired, FILTER_VALIDATE_BOOLEAN),
+      ),
+      'territorio' => array(
+        'title' => $dataMap['territorio']->name(),
+        'required' => filter_var($dataMap['territorio']->IsRequired, FILTER_VALIDATE_BOOLEAN),
+        "enum" => ContestoPianoComunaleConnector::VALUES_TERRITORIO
       )
     );
 
@@ -153,6 +161,12 @@ class ContestoPianoComunaleConnector extends AbstractBaseConnector
         'helper' => $dataMap['telefono_referente_tecnico']->description(),
         'label' => $dataMap['telefono_referente_tecnico']->name(),
         'type' => 'text'
+      ),
+      'territorio' => array(
+        'helper' => $dataMap['territorio']->description(),
+        "type" => "select",
+        "optionLabels" => ContestoPianoComunaleConnector::VALUES_TERRITORIO,
+        "fieldClass" => "label_as_legend",
       )
     );
 
@@ -191,6 +205,7 @@ class ContestoPianoComunaleConnector extends AbstractBaseConnector
       'nome_referente_tecnico' => $_POST['nome_referente_tecnico'],
       'email_referente_tecnico' => $_POST['email_referente_tecnico'],
       'telefono_referente_tecnico' => $_POST['telefono_referente_tecnico'],
+      'territorio' => $_POST['territorio'],
     );
 
     $result = eZContentFunctions::updateAndPublishObject($this->object, $params);
