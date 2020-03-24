@@ -219,3 +219,10 @@ Subdir=templates
 Match[class_identifier]=public_service
 Match[attribute_identifier]=input
 
+[view_infrastruttura_family_geofence]
+Source=content/datatype/view/ezbinaryfile.tpl
+MatchFile=datatype/view/geofence.tpl
+Subdir=templates
+#Match[class_identifier]=infrastruttura_family
+Match[attribute_identifier]=geofence_file
+
